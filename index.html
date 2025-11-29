@@ -1,12 +1,256 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Анекдоты.her</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Studios Mini PC</title>
+  <style>
+    :root{
+      --taskbar: #1f2937;
+      --bg: linear-gradient(135deg,#0f172a,#071031);
+      --window:#ffffff;
+      --accent:#2563eb;
+    }
+    *{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial;margin:0;padding:0}
+    html,body{height:100%}
+    body{background:var(--bg);color:#fff;overflow:hidden}
+
+    /* Desktop */
+    .desktop{position:relative;width:100%;height:100vh;padding:16px}
+    .icon{width:72px;text-align:center;color:#cbd5e1;cursor:pointer;margin:8px;display:inline-block}
+    .icon img{width:48px;height:48px;display:block;margin:0 auto 6px}
+    .icon span{font-size:12px}
+
+    /* Taskbar */
+    .taskbar{position:fixed;left:0;right:0;bottom:0;height:48px;background:var(--taskbar);display:flex;align-items:center;padding:0 8px;gap:8px}
+    .start-btn{width:44px;height:36px;background:transparent;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .start-btn:hover{background:rgba(255,255,255,0.03)}
+    .taskbar .tray{margin-left:auto;color:#9ca3af;font-size:13px}
+    .taskbar .task{background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;font-size:13px}
+
+    /* Start menu */
+    .start-menu{position:fixed;left:8px;bottom:56px;width:280px;background:rgba(255,255,255,0.03);backdrop-filter:blur(6px);border-radius:8px;padding:12px;display:none}
+    .start-menu .search{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    .start-list{margin-top:8px;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto}
+    .start-item{padding:8px;border-radius:6px;cursor:pointer}
+    .start-item:hover{background:rgba(255,255,255,0.02)}
+
+    /* Window */
+    .window{position:fixed;width:520px;height:360px;background:#fff;color:#111;border-radius:8px;box-shadow:0 10px 30px rgba(2,6,23,0.6);overflow:hidden;display:flex;flex-direction:column}
+    .titlebar{height:36px;background:linear-gradient(0deg,#f8fafc,#fff);display:flex;align-items:center;justify-content:space-between;padding:0 8px;cursor:grab}
+    .title{font-weight:600;font-size:14px;color:#0f172a}
+    .controls{display:flex;gap:6px}
+    .btn{width:28px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+    .btn.close{background:#ef4444;color:#fff}
+    .btn.min{background:#fbbf24;color:#111}
+    .btn.max{background:#10b981;color:#fff}
+    .content{flex:1;padding:12px;background:#f8fafc}
+
+    /* Notepad */
+    .notepad textarea{width:100%;height:100%;border:0;resize:none;font-family:monospace}
+
+    /* Explorer */
+    .explorer .files{display:flex;flex-wrap:wrap;gap:8px}
+    .file{width:96px;text-align:center;color:#0f172a}
+    .file img{width:48px;height:48px}
+
+    /* small helpers */
+    .hidden{display:none}
+
+    /* Responsive */
+    @media(max-width:600px){.window{width:92%;height:70%}}
+  </style>
 </head>
 <body>
-  <img src="71EXTyXTODL.webp" alt="image">
-  <h1>заходит девушка в ресторан и говорит, я хочу кофе  а официант отвечает ладно, он возращяется и дает кофе, а девушка его выпила и говорит фуу что за кофе от него воняет а официант не растерялся и говорит А я сидел за изнасиловние </h1>
-  <p>he he he.</p>
+  <div class="desktop" id="desktop">
+    <div class="icon" data-app="explorer"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='none'><rect width='48' height='48' rx='8' fill='%232563eb'/><path d='M12 16h24v20H12z' fill='%23fff' opacity='0.9'/></svg>" alt="Explorer"/><span>Проводник</span></div>
+    <div class="icon" data-app="notepad"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect width='48' height='48' rx='8' fill='%23f59e0b'/><path d='M12 14h24v20H12z' fill='%23fff' opacity='0.9'/></svg>" alt="Notepad"/><span>Блокнот</span></div>
+    <div class="icon" data-app="about"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect width='48' height='48' rx='8' fill='%239b8cff'/><text x='24' y='30' text-anchor='middle' font-size='18' fill='%23fff'>i</text></svg>" alt="About"/><span>О системе</span></div>
+  </div>
+
+  <div class="taskbar">
+    <div class="start-btn" id="startBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="8" height="8" fill="#fff" opacity="0.9"/><rect x="13" y="3" width="8" height="8" fill="#fff" opacity="0.6"/><rect x="3" y="13" width="8" height="8" fill="#fff" opacity="0.6"/><rect x="13" y="13" width="8" height="8" fill="#fff" opacity="0.4"/></svg></div>
+    <div class="task" id="taskList"> </div>
+    <div class="tray" id="tray"></div>
+  </div>
+
+  <div class="start-menu" id="startMenu">
+    <input class="search" id="startSearch" placeholder="Найти приложения и файлы..." />
+    <div class="start-list" id="startList">
+      <div class="start-item" data-app="explorer">Проводник</div>
+      <div class="start-item" data-app="notepad">Блокнот</div>
+      <div class="start-item" data-app="about">О системе</div>
+    </div>
+  </div>
+
+  <!-- Templates for windows (hidden) -->
+  <template id="windowTpl">
+    <div class="window" data-app="">
+      <div class="titlebar"><div class="title">Название</div><div class="controls"><div class="btn min">—</div><div class="btn max">◻</div><div class="btn close">✕</div></div></div>
+      <div class="content">content</div>
+    </div>
+  </template>
+
+  <template id="notepadTpl">
+    <div class="window notepad" data-app="notepad">
+      <div class="titlebar"><div class="title">Блокнот</div><div class="controls"><div class="btn min">—</div><div class="btn max">◻</div><div class="btn close">✕</div></div></div>
+      <div class="content"><textarea placeholder="Наберите текст..."></textarea></div>
+    </div>
+  </template>
+
+  <template id="explorerTpl">
+    <div class="window explorer" data-app="explorer">
+      <div class="titlebar"><div class="title">Проводник</div><div class="controls"><div class="btn min">—</div><div class="btn max">◻</div><div class="btn close">✕</div></div></div>
+      <div class="content"><div class="files"><div class="file"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect width='48' height='48' rx='8' fill='%23ffffff'/></svg>"><div>Файл.txt</div></div><div class="file"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect width='48' height='48' rx='8' fill='%23ffffff'/></svg>"><div>Документ.doc</div></div></div></div>
+    </div>
+  </template>
+
+  <template id="aboutTpl">
+    <div class="window" data-app="about">
+      <div class="titlebar"><div class="title">О системе</div><div class="controls"><div class="btn min">—</div><div class="btn max">◻</div><div class="btn close">✕</div></div></div>
+      <div class="content"><h3>MiniWindows</h3><p>Мини-операционная система на HTML/CSS/JS — демонстрация возможностей. Версия: 1.0</p></div>
+    </div>
+  </template>
+
+  <script>
+    // Basic state
+    const desktop = document.getElementById('desktop');
+    const startBtn = document.getElementById('startBtn');
+    const startMenu = document.getElementById('startMenu');
+    const startList = document.getElementById('startList');
+    const taskList = document.getElementById('taskList');
+    const tray = document.getElementById('tray');
+
+    let zIndex = 10;
+
+    // clock in tray
+    function updateClock(){
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      tray.textContent = h+':' + m;
+    }
+    setInterval(updateClock,1000);
+    updateClock();
+
+    // Start menu toggle
+    startBtn.addEventListener('click',e=>{ startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block'; });
+    document.addEventListener('click',e=>{ if(!startMenu.contains(e.target) && e.target !== startBtn) startMenu.style.display='none'; });
+
+    // Open apps from desktop icons
+    desktop.addEventListener('dblclick',e=>{
+      const icon = e.target.closest('.icon');
+      if(icon) openApp(icon.dataset.app);
+    });
+    desktop.addEventListener('click',e=>{
+      const icon = e.target.closest('.icon');
+      if(icon && e.detail===1) highlight(icon);
+    });
+
+    function highlight(el){el.style.transform='translateY(-2px)'; setTimeout(()=>el.style.transform='none',120)}
+
+    // Start list click
+    startList.addEventListener('click',e=>{
+      const it = e.target.closest('.start-item'); if(it) openApp(it.dataset.app);
+    });
+
+    // Open app
+    function openApp(name){
+      // if already open, focus
+      const existing = document.querySelector(`.window[data-app='${name}']`);
+      if(existing){focusWin(existing); return}
+
+      let tpl;
+      if(name==='notepad') tpl = document.getElementById('notepadTpl');
+      else if(name==='explorer') tpl = document.getElementById('explorerTpl');
+      else if(name==='about') tpl = document.getElementById('aboutTpl');
+      else tpl = document.getElementById('windowTpl');
+
+      const node = tpl.content.cloneNode(true).children[0];
+      document.body.appendChild(node);
+      node.style.left = (50 + Math.random()*200) + 'px';
+      node.style.top = (50 + Math.random()*100) + 'px';
+      node.style.zIndex = ++zIndex;
+
+      // taskbar entry
+      const task = document.createElement('div'); task.className='task'; task.textContent = node.querySelector('.title').textContent; task.dataset.app=name;
+      taskList.appendChild(task);
+      task.addEventListener('click',()=>{ if(node.style.display==='none'){node.style.display='flex';} focusWin(node); });
+
+      // window controls
+      const win = node;
+      const titlebar = win.querySelector('.titlebar');
+      const btnClose = win.querySelector('.btn.close');
+      const btnMin = win.querySelector('.btn.min');
+      const btnMax = win.querySelector('.btn.max');
+
+      btnClose.addEventListener('click',()=>{ win.remove(); task.remove(); });
+      btnMin.addEventListener('click',()=>{ win.style.display='none'; });
+      btnMax.addEventListener('click',()=>{ if(win.dataset.maxed!=='1'){ maximize(win); } else{ restore(win); } });
+
+      // dragging
+      makeDraggable(win,titlebar);
+      focusWin(win);
+    }
+
+    function focusWin(win){ document.querySelectorAll('.window').forEach(w=>w.style.boxShadow='0 10px 30px rgba(2,6,23,0.2)'); win.style.zIndex = ++zIndex; win.style.boxShadow='0 18px 40px rgba(2,6,23,0.6)'; }
+
+    function maximize(win){ win.dataset.prev = JSON.stringify({left:win.style.left,top:win.style.top,width:win.style.width,height:win.style.height}); win.style.left='8px'; win.style.top='8px'; win.style.width = (window.innerWidth-16) + 'px'; win.style.height = (window.innerHeight-72) + 'px'; win.dataset.maxed='1'; }
+    function restore(win){ const prev = JSON.parse(win.dataset.prev||'{}'); if(prev.left) win.style.left=prev.left; if(prev.top) win.style.top=prev.top; if(prev.width) win.style.width=prev.width; if(prev.height) win.style.height=prev.height; delete win.dataset.maxed; }
+
+    function makeDraggable(win,handle){
+      handle.addEventListener('mousedown', startDrag);
+      handle.addEventListener('touchstart', startDrag);
+      function startDrag(e){
+        e.preventDefault(); focusWin(win);
+        const rect = win.getBoundingClientRect();
+        const startX = (e.touches?e.touches[0].clientX:e.clientX);
+        const startY = (e.touches?e.touches[0].clientY:e.clientY);
+        const offsetX = startX - rect.left;
+        const offsetY = startY - rect.top;
+        function move(ev){ const cx = (ev.touches?ev.touches[0].clientX:ev.clientX); const cy = (ev.touches?ev.touches[0].clientY:ev.clientY); win.style.left = (cx - offsetX) + 'px'; win.style.top = (cy - offsetY) + 'px'; }
+        function end(){ document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',end); document.removeEventListener('touchmove',move); document.removeEventListener('touchend',end); }
+        document.addEventListener('mousemove',move); document.addEventListener('mouseup',end); document.addEventListener('touchmove',move); document.addEventListener('touchend',end);
+      }
+    }
+
+    // Double-click icons also open
+    document.querySelectorAll('.icon').forEach(icon=>{
+      icon.addEventListener('dblclick',()=>openApp(icon.dataset.app));
+    });
+
+    // keyboard shortcuts
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape') document.querySelectorAll('.window').forEach(w=>w.remove());
+      if(e.ctrlKey && e.key==='n') openApp('notepad');
+    });
+
+    // simple persistence: save notepad text
+    window.addEventListener('beforeunload',()=>{
+      const ta = document.querySelector('.notepad textarea'); if(ta) localStorage.setItem('notepad',ta.value);
+    });
+    // restore notepad if present
+    function restoreNotepad(){ const text = localStorage.getItem('notepad'); if(text){ openApp('notepad'); setTimeout(()=>{ const ta = document.querySelector('.notepad textarea'); if(ta) ta.value = text; },200); } }
+    restoreNotepad();
+
+    // open app helper when clicking icons
+    document.querySelectorAll('[data-app]').forEach(el=>{
+      el.addEventListener('click',e=>{
+        if(el.classList.contains('icon') && e.detail===2) openApp(el.dataset.app);
+      });
+    });
+
+    // small: open notepad on single click from start menu
+    // (already covered)
+
+    // make windows focusable on click
+    document.addEventListener('click',e=>{
+      const win = e.target.closest('.window'); if(win) focusWin(win);
+    });
+
+    // Prevent text selection while dragging
+    document.addEventListener('selectstart',e=>{ if(e.target.closest('.titlebar')) e.preventDefault(); });
+
+  </script>
 </body>
 </html>
