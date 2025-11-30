@@ -1,161 +1,2011 @@
 
- <!DOCTYPE html><html dir="ltr" lang="ru-RU" prefix="og: https://ogp.me/ns#"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="profile" href="http://gmpg.org/xfn/11"><style type='text/css'></style><title>Высокая загрузка CPU процессом System (Ntoskrnl.exe) в Windows - РЕМОНТКА</title><style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style><meta name="description" content="На одном их компьютеров с только что установленной Windows 10 пользователь стал жаловаться на постоянные зависания и медленную работу ОС. В диспетчере устройств видно, что более 50% ресурсов процессора используется процесс System ( ntoskrnl.exe ). В этой статье я постараюсь описать основные методики диагностики высокой загрузки CPU различными процессами и методы выявления проблемного компонента Windows." /><meta name="robots" content="max-image-preview:large" /><link rel="canonical" href="https://remontka.com/high-cpu-usage-system-ntoskrnl-exe-process/" /><meta name="generator" content="All in One SEO (AIOSEO) 4.4.6" /><meta property="og:locale" content="ru_RU" /><meta property="og:site_name" content="РЕМОНТКА -" /><meta property="og:type" content="article" /><meta property="og:title" content="Высокая загрузка CPU процессом System (Ntoskrnl.exe) в Windows - РЕМОНТКА" /><meta property="og:description" content="На одном их компьютеров с только что установленной Windows 10 пользователь стал жаловаться на постоянные зависания и медленную работу ОС. В диспетчере устройств видно, что более 50% ресурсов процессора используется процесс System ( ntoskrnl.exe ). В этой статье я постараюсь описать основные методики диагностики высокой загрузки CPU различными процессами и методы выявления проблемного компонента Windows." /><meta property="og:url" content="https://remontka.com/high-cpu-usage-system-ntoskrnl-exe-process/" /><meta property="article:published_time" content="2024-10-04T16:32:18+00:00" /><meta property="article:modified_time" content="2024-10-04T16:32:18+00:00" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Высокая загрузка CPU процессом System (Ntoskrnl.exe) в Windows - РЕМОНТКА" /><meta name="twitter:description" content="На одном их компьютеров с только что установленной Windows 10 пользователь стал жаловаться на постоянные зависания и медленную работу ОС. В диспетчере устройств видно, что более 50% ресурсов процессора используется процесс System ( ntoskrnl.exe ). В этой статье я постараюсь описать основные методики диагностики высокой загрузки CPU различными процессами и методы выявления проблемного компонента Windows." /> <script type="application/ld+json" class="aioseo-schema">{"@context":"https:\/\/schema.org","@graph":[{"@type":"BlogPosting","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#blogposting","name":"\u0412\u044b\u0441\u043e\u043a\u0430\u044f \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430 CPU \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u043c System (Ntoskrnl.exe) \u0432 Windows - \u0420\u0415\u041c\u041e\u041d\u0422\u041a\u0410","headline":"\u0412\u044b\u0441\u043e\u043a\u0430\u044f \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430 CPU \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u043c System (Ntoskrnl.exe) \u0432 Windows","author":{"@id":"https:\/\/remontka.com\/author\/admin\/#author"},"publisher":{"@id":"https:\/\/remontka.com\/#person"},"image":{"@type":"ImageObject","url":"https:\/\/remontka.com\/wp-content\/uploads\/ito\/2018\/03\/process-system-vysokaya-nagruzka-na-processor.png","@id":"https:\/\/remontka.com\/#articleImage"},"datePublished":"2024-10-04T16:32:18+03:00","dateModified":"2024-10-04T16:32:18+03:00","inLanguage":"ru-RU","mainEntityOfPage":{"@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#webpage"},"isPartOf":{"@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#webpage"},"articleSection":"Windows 10, Windows 7"},{"@type":"BreadcrumbList","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#breadcrumblist","itemListElement":[{"@type":"ListItem","@id":"https:\/\/remontka.com\/#listItem","position":1,"item":{"@type":"WebPage","@id":"https:\/\/remontka.com\/","name":"\u0413\u043b\u0430\u0432\u043d\u0430\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430","description":"Remontka.com - \u0431\u043b\u043e\u0433 \u043f\u0440\u043e \u0440\u0435\u043c\u043e\u043d\u0442 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u043e\u0432, \u043d\u043e\u0443\u0442\u0431\u0443\u043a\u043e\u0432, \u0441\u043c\u0430\u0440\u0442\u0444\u043e\u043d\u043e\u0432 \u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b IT \u0442\u0435\u043c\u0430\u0442\u0438\u043a\u0438","url":"https:\/\/remontka.com\/"},"nextItem":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#listItem"},{"@type":"ListItem","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#listItem","position":2,"item":{"@type":"WebPage","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/","name":"\u0412\u044b\u0441\u043e\u043a\u0430\u044f \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430 CPU \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u043c System (Ntoskrnl.exe) \u0432 Windows","description":"\u041d\u0430 \u043e\u0434\u043d\u043e\u043c \u0438\u0445 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u043e\u0432 \u0441 \u0442\u043e\u043b\u044c\u043a\u043e \u0447\u0442\u043e \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043d\u043e\u0439 Windows 10 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c \u0441\u0442\u0430\u043b \u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c\u0441\u044f \u043d\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u044b\u0435 \u0437\u0430\u0432\u0438\u0441\u0430\u043d\u0438\u044f \u0438 \u043c\u0435\u0434\u043b\u0435\u043d\u043d\u0443\u044e \u0440\u0430\u0431\u043e\u0442\u0443 \u041e\u0421. \u0412 \u0434\u0438\u0441\u043f\u0435\u0442\u0447\u0435\u0440\u0435 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432 \u0432\u0438\u0434\u043d\u043e, \u0447\u0442\u043e \u0431\u043e\u043b\u0435\u0435 50% \u0440\u0435\u0441\u0443\u0440\u0441\u043e\u0432 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u0440\u0430 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0446\u0435\u0441\u0441 System ( ntoskrnl.exe ). \u0412 \u044d\u0442\u043e\u0439 \u0441\u0442\u0430\u0442\u044c\u0435 \u044f \u043f\u043e\u0441\u0442\u0430\u0440\u0430\u044e\u0441\u044c \u043e\u043f\u0438\u0441\u0430\u0442\u044c \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u043c\u0435\u0442\u043e\u0434\u0438\u043a\u0438 \u0434\u0438\u0430\u0433\u043d\u043e\u0441\u0442\u0438\u043a\u0438 \u0432\u044b\u0441\u043e\u043a\u043e\u0439 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438 CPU \u0440\u0430\u0437\u043b\u0438\u0447\u043d\u044b\u043c\u0438 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u0430\u043c\u0438 \u0438 \u043c\u0435\u0442\u043e\u0434\u044b \u0432\u044b\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u043d\u043e\u0433\u043e \u043a\u043e\u043c\u043f\u043e\u043d\u0435\u043d\u0442\u0430 Windows.","url":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/"},"previousItem":"https:\/\/remontka.com\/#listItem"}]},{"@type":"Person","@id":"https:\/\/remontka.com\/author\/admin\/#author","url":"https:\/\/remontka.com\/author\/admin\/","name":"admin","image":{"@type":"ImageObject","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#authorImage","url":"https:\/\/secure.gravatar.com\/avatar\/535210b2e14950d94717efddc59dde9034fb0668e6afd3148e103511539ade9a?s=96&d=mm&r=g","width":96,"height":96,"caption":"admin"}},{"@type":"WebPage","@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#webpage","url":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/","name":"\u0412\u044b\u0441\u043e\u043a\u0430\u044f \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430 CPU \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u043c System (Ntoskrnl.exe) \u0432 Windows - \u0420\u0415\u041c\u041e\u041d\u0422\u041a\u0410","description":"\u041d\u0430 \u043e\u0434\u043d\u043e\u043c \u0438\u0445 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u043e\u0432 \u0441 \u0442\u043e\u043b\u044c\u043a\u043e \u0447\u0442\u043e \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043d\u043e\u0439 Windows 10 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c \u0441\u0442\u0430\u043b \u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c\u0441\u044f \u043d\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u044b\u0435 \u0437\u0430\u0432\u0438\u0441\u0430\u043d\u0438\u044f \u0438 \u043c\u0435\u0434\u043b\u0435\u043d\u043d\u0443\u044e \u0440\u0430\u0431\u043e\u0442\u0443 \u041e\u0421. \u0412 \u0434\u0438\u0441\u043f\u0435\u0442\u0447\u0435\u0440\u0435 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432 \u0432\u0438\u0434\u043d\u043e, \u0447\u0442\u043e \u0431\u043e\u043b\u0435\u0435 50% \u0440\u0435\u0441\u0443\u0440\u0441\u043e\u0432 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u0440\u0430 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0446\u0435\u0441\u0441 System ( ntoskrnl.exe ). \u0412 \u044d\u0442\u043e\u0439 \u0441\u0442\u0430\u0442\u044c\u0435 \u044f \u043f\u043e\u0441\u0442\u0430\u0440\u0430\u044e\u0441\u044c \u043e\u043f\u0438\u0441\u0430\u0442\u044c \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u043c\u0435\u0442\u043e\u0434\u0438\u043a\u0438 \u0434\u0438\u0430\u0433\u043d\u043e\u0441\u0442\u0438\u043a\u0438 \u0432\u044b\u0441\u043e\u043a\u043e\u0439 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438 CPU \u0440\u0430\u0437\u043b\u0438\u0447\u043d\u044b\u043c\u0438 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u0430\u043c\u0438 \u0438 \u043c\u0435\u0442\u043e\u0434\u044b \u0432\u044b\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u043d\u043e\u0433\u043e \u043a\u043e\u043c\u043f\u043e\u043d\u0435\u043d\u0442\u0430 Windows.","inLanguage":"ru-RU","isPartOf":{"@id":"https:\/\/remontka.com\/#website"},"breadcrumb":{"@id":"https:\/\/remontka.com\/high-cpu-usage-system-ntoskrnl-exe-process\/#breadcrumblist"},"author":{"@id":"https:\/\/remontka.com\/author\/admin\/#author"},"creator":{"@id":"https:\/\/remontka.com\/author\/admin\/#author"},"datePublished":"2024-10-04T16:32:18+03:00","dateModified":"2024-10-04T16:32:18+03:00"},{"@type":"WebSite","@id":"https:\/\/remontka.com\/#website","url":"https:\/\/remontka.com\/","name":"\u0420\u0415\u041c\u041e\u041d\u0422\u041a\u0410","inLanguage":"ru-RU","publisher":{"@id":"https:\/\/remontka.com\/#person"}}]}</script> <link rel="amphtml" href="https://remontka.com/high-cpu-usage-system-ntoskrnl-exe-process/amp/" /><meta name="generator" content="AMP for WP 1.0.95"/><link rel='dns-prefetch' href='//www.googletagmanager.com' /><link rel='dns-prefetch' href='//fonts.googleapis.com' /><link rel='dns-prefetch' href='//pagead2.googlesyndication.com' /><link rel="alternate" type="application/rss+xml" title="РЕМОНТКА &raquo; Лента" href="https://remontka.com/feed/" />  <script type="text/javascript">window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/remontka.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.8.3"}};
-/*! This file is auto-generated */
-!function(s,n){var o,i,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),a=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===a[t]})}function u(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);for(var n=e.getImageData(16,16,1,1),a=0;a<n.data.length;a++)if(0!==n.data[a])return!1;return!0}function f(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\udedf")}return!1}function g(e,t,n,a){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):s.createElement("canvas"),o=r.getContext("2d",{willReadFrequently:!0}),i=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(function(e){i[e]=t(o,e,n,a)}),i}function t(e){var t=s.createElement("script");t.src=e,t.defer=!0,s.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",i=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){s.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+g.toString()+"("+[JSON.stringify(i),f.toString(),p.toString(),u.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"}),r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=function(e){c(n=e.data),r.terminate(),t(n)})}catch(e){}c(n=g(i,f,p,u))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);</script> <link rel='stylesheet' id='litespeed-cache-dummy-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_6fa931a5525f902f3af4b91fc1ad6d21.css' type='text/css' media='all' /><link rel='stylesheet' id='gtranslate-style-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_1ce35583935692f762ce19e7600977cf.css' type='text/css' media='all' /><style id='wp-emoji-styles-inline-css' type='text/css'>img.wp-smiley, img.emoji {
-		display: inline !important;
-		border: none !important;
-		box-shadow: none !important;
-		height: 1em !important;
-		width: 1em !important;
-		margin: 0 0.07em !important;
-		vertical-align: -0.1em !important;
-		background: none !important;
-		padding: 0 !important;
-	}</style><link rel='stylesheet' id='wp-block-library-css' href='https://remontka.com/wp-includes/css/dist/block-library/style.min.css' type='text/css' media='all' /><style id='classic-theme-styles-inline-css' type='text/css'>/*! This file is auto-generated */
-.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}</style><style id='global-styles-inline-css' type='text/css'>:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
-:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
-:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
-:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}</style><link rel='stylesheet' id='ansar-import-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_e6094661d8923e95b233019ebff7c8f0.css' type='text/css' media='all' /><link rel='stylesheet' id='af-fontawesome-css' href='https://remontka.com/wp-content/plugins/asgaros-forum/libs/fontawesome/css/all.min.css' type='text/css' media='all' /><link rel='stylesheet' id='af-fontawesome-compat-v4-css' href='https://remontka.com/wp-content/plugins/asgaros-forum/libs/fontawesome/css/v4-shims.min.css' type='text/css' media='all' /><link rel='stylesheet' id='af-widgets-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_40b2b231d8f1cb10657e5340000d22e0.css' type='text/css' media='all' /><link rel='stylesheet' id='contact-form-7-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_e6fae855021a88a0067fcc58121c594f.css' type='text/css' media='all' /><link rel='stylesheet' id='fancybox-for-wp-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_592ead116e192a422e3e033ccad4f39d.css' type='text/css' media='all' /><link rel='stylesheet' id='newses-fonts-css' href='//fonts.googleapis.com/css?family=Rubik%3A400%2C500%2C700%7CPoppins%3A400%26display%3Dswap&#038;subset=latin%2Clatin-ext' type='text/css' media='all' /><link rel='stylesheet' id='bootstrap-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_64c0b89cd3f93e856c18ef61557ab931.css' type='text/css' media='all' /><link rel='stylesheet' id='newses-style-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_b7a82004322993f9a519ff22e58ecace.css' type='text/css' media='all' /><link rel='stylesheet' id='newses-default-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_f39dda0e88eda3b4c3560ec8ecba755c.css' type='text/css' media='all' /><link rel='stylesheet' id='font-awesome-css' href='https://remontka.com/wp-content/plugins/elementor/assets/lib/font-awesome/css/font-awesome.min.css' type='text/css' media='all' /><link rel='stylesheet' id='smartmenus-css' href='https://remontka.com/wp-content/cache/wmac/css/wmac_single_9e5c3fb862ecf5807e5a44d3d165ddac.css' type='text/css' media='all' /><link rel='stylesheet' id='newses-swiper.min-css' href='https://remontka.com/wp-content/themes/newses/css/swiper.min.css' type='text/css' media='all' /> <script type="text/javascript" src="https://remontka.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script> <script type="text/javascript" src="https://remontka.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_49cea0a781874a962879c2caca9bc322.js?ver=1.0.5" id="ansar-import-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_cd979ada3d42377f0f6ef56c3cdc8010.js?ver=1.3.4" id="fancybox-for-wp-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_6c14accb015f2d62154ee408fe5d0c3e.js?ver=1744742001" id="newses-navigation-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_72d766e61415a933f991509619215edb.js?ver=1744742001" id="bootstrap-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_9f417cab213a1bb1135ddc1a13d3bf79.js?ver=1744742001" id="newses-marquee-js-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/themes/newses/js/swiper.min.js?ver=1744742001" id="newses-swiper.min.js-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_a06a6b9335145f47f7f7efe73eadbbb7.js?ver=1744742001" id="smartmenus-js-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_c9e5a0446d6d895f2c610dab5fab60cd.js?ver=1744742001" id="bootstrap-smartmenus-js-js"></script>  <script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-211861481-1" id="google_gtagjs-js" async></script> <script type="text/javascript" id="google_gtagjs-js-after">window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
-gtag('set', 'linker', {"domains":["remontka.com"]} );
-gtag("js", new Date());
-gtag("set", "developer_id.dZTNiMT", true);
-gtag("config", "UA-211861481-1", {"anonymize_ip":true});</script> <link rel="https://api.w.org/" href="https://remontka.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://remontka.com/wp-json/wp/v2/posts/105280" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://remontka.com/xmlrpc.php?rsd" /><meta name="generator" content="WordPress 6.8.3" /><link rel='shortlink' href='https://remontka.com/?p=105280' /><link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://remontka.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fremontka.com%2Fhigh-cpu-usage-system-ntoskrnl-exe-process%2F" /><link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://remontka.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fremontka.com%2Fhigh-cpu-usage-system-ntoskrnl-exe-process%2F&#038;format=xml" /> <style type="text/css">.fancybox-slide--image .fancybox-content{background-color: #FFFFFF}
-	
-	img.fancybox-image{border-width:10px;border-color:#FFFFFF;border-style:solid;}
-	div.fancybox-bg{background-color:rgba(102,102,102,0.3);opacity:1 !important;}div.fancybox-content{border-color:#FFFFFF}
-	
-	div.fancybox-content{background-color:#FFFFFF}
-	
-	
-	
-	
-	div.fancybox-caption p.caption-title{display:inline-block}
-	div.fancybox-caption p.caption-title{font-size:14px}
-	div.fancybox-caption p.caption-title{color:#fff}
-	div.fancybox-caption {color:#333333}div.fancybox-caption p.caption-title {background:#fff;color:#000;padding:10px 30px;width:auto;}body.fancybox-active .fancybox-container .fancybox-stage .fancybox-content .fancybox-close-small{display:block;}</style><script type="text/javascript">jQuery(function () {
+<!DOCTYPE html>
+<html lang="ru" prefix="og: http://ogp.me/ns#
+video: //ogp.me/ns/video#
+ya: //webmaster.yandex.ru/vocabularies/">
+  <head>
+    <title>Во все тяжкие 1-4 сезон смотреть онлайн бесплатно в хорошем качестве HD 720 или 1080p </title>
+<meta name="charset" content="utf-8">
+<meta name="title" content="Во все тяжкие 1-4 сезон смотреть онлайн бесплатно в хорошем качестве HD 720 или 1080p ">
+<meta name="description" content="Жизнь 50-летнего Уолтера Уайта, учителя химии, сплошная борьба за выживание. Его супруга ожидает второго ребенка, которого они не планировали, старший сын - инвалид, а денег у семьи хватает только на то, чтобы с трудом сводить концы с концами. Чтобы хоть немного улучшить финансовое положение Уолтер">
+<meta name="keywords" content="">
+<meta name="generator" content="DataLife Engine (https://dle-news.ru)">
+<link rel="canonical" href="https://kinogoo.fm/1182-vo-vse-tjazhkie-1-5-sezon.html">
+<link rel="alternate" type="application/rss+xml" title="Kinogoo.FM: фильмы смотреть онлайн бесплатно в хорошем качестве HD 720, 1080p RSS" href="https://kinogoo.fm/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="Kinogoo.FM: фильмы смотреть онлайн бесплатно в хорошем качестве HD 720, 1080p RSS Turbo" href="https://kinogoo.fm/rssturbo.xml">
+<link rel="alternate" type="application/rss+xml" title="Kinogoo.FM: фильмы смотреть онлайн бесплатно в хорошем качестве HD 720, 1080p RSS Dzen" href="https://kinogoo.fm/rssdzen.xml">
+<link rel="search" type="application/opensearchdescription+xml" title="Kinogoo.FM: фильмы смотреть онлайн бесплатно в хорошем качестве HD 720, 1080p" href="https://kinogoo.fm/index.php?do=opensearch">
+<link rel="preconnect" href="https://kinogoo.fm/" fetchpriority="high">
+<meta property="twitter:title" content="Во все тяжкие 1-4 сезон смотреть онлайн бесплатно в хорошем качестве HD 720 или 1080p ">
+<meta property="twitter:url" content="https://kinogoo.fm/1182-vo-vse-tjazhkie-1-5-sezon.html">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:image" content="https://kinogoo.fm/uploads/posts/2023-12/852-vo-vse-tjazhkie-1-5-sezon.jpg">
+<meta property="twitter:description" content="Уолтер Уайт — среднестатистический житель небольшого городка Альбукерке, в свои 50 лет преподающий химию в одной из местных школ. Заработной платы учителя ему катастрофически не хватает, поэтому его второй работой считается автомойка. Заработанные средства он тратит на содержание своей беременной">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Kinogoo.FM: фильмы смотреть онлайн бесплатно в хорошем качестве HD 720, 1080p">
+<meta property="og:title" content="Во все тяжкие 1-4 сезон смотреть онлайн бесплатно в хорошем качестве HD 720 или 1080p ">
+<meta property="og:url" content="https://kinogoo.fm/1182-vo-vse-tjazhkie-1-5-sezon.html">
+<meta property="og:image" content="https://kinogoo.fm/uploads/posts/2023-12/852-vo-vse-tjazhkie-1-5-sezon.jpg">
+<meta property="og:description" content="Уолтер Уайт — среднестатистический житель небольшого городка Альбукерке, в свои 50 лет преподающий химию в одной из местных школ. Заработной платы учителя ему катастрофически не хватает, поэтому его второй работой считается автомойка. Заработанные средства он тратит на содержание своей беременной">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/templates/T/images/favicon.ico" />
+    <link href="/templates/T/css/styles.css" type="text/css" rel="stylesheet" />
+    <link href="/templates/T/css/engine.css" type="text/css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Play:400,700&amp;subset=cyrillic"
+      rel="stylesheet" />
+    <meta name="google-site-verification" content="7RHH4N80QTyj-xA7HVNog0GxS_R9pp-9RkSTLFzyMok" />
+    <meta name="yandex-verification" content="69c7f09cc5cc8493" />
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <link rel="dns-prefetch" href="https://counter.yadro.ru">
+    <link rel="dns-prefetch" href="https://cdn77.s2517.com">
+    <link rel="dns-prefetch" href="https://cdn.servetraff.com">
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
 
-		var mobileOnly = false;
-		
-		if (mobileOnly) {
-			return;
-		}
+    <div class="wr" id="wr-bg">
+      <header class="top-wr">
+  <div class="top center" id="top">
+    <a href="/" class="logo" title="На главную">Смотреть фильмы онлайн на Киного</a>
+    <!--noindex-->
+    <div class="search-wrap" id="search-wrap">
+      <form id="quicksearch" method="post">
+        <input type="hidden" name="do" value="search" />
+        <input type="hidden" name="subaction" value="search" />
+        <div class="search-box">
+          <input id="story" name="story" placeholder="Поиск..." type="text" />
+          <button type="submit" title="Найти"><i class="fa fa-search"></i></button>
+        </div>
+      </form>
+    </div>
+    <div class="log-buts icon-left clearfix">
+  
 
-		jQuery.fn.getTitle = function () { // Copy the title of every IMG tag and add it to its parent A so that fancybox can show titles
-			var arr = jQuery("a[data-fancybox]");
-									jQuery.each(arr, function() {
-										var title = jQuery(this).children("img").attr("title");
-										 var caption = jQuery(this).next("figcaption").html();
-                                        if(caption && title){jQuery(this).attr("title",title+" " + caption)}else if(title){ jQuery(this).attr("title",title);}else if(caption){jQuery(this).attr("title",caption);}
-									});			}
+  
+  <a href="#" id="show-login" rel="nofollow">
+    <i class="fa fa-sign-in"></i><span>Вход</span>
+  </a>
 
-		// Supported file extensions
+  <a href="https://kinogoo.fm/index.php?do=register" class="reg-link" rel="nofollow">
+    <i class="fa fa-user-plus"></i>Регистрация
+  </a>
+  
+</div>
 
-				var thumbnails = jQuery("a:has(img)").not(".nolightbox").not('.envira-gallery-link').not('.ngg-simplelightbox').filter(function () {
-			return /\.(jpe?g|png|gif|mp4|webp|bmp|pdf)(\?[^/]*)*$/i.test(jQuery(this).attr('href'))
-		});
-		
 
-		// Add data-type iframe for links that are not images or videos.
-		var iframeLinks = jQuery('.fancyboxforwp').filter(function () {
-			return !/\.(jpe?g|png|gif|mp4|webp|bmp|pdf)(\?[^/]*)*$/i.test(jQuery(this).attr('href'))
-		}).filter(function () {
-			return !/vimeo|youtube/i.test(jQuery(this).attr('href'))
-		});
-		iframeLinks.attr({"data-type": "iframe"}).getTitle();
 
-				// Gallery All
-		thumbnails.addClass("fancyboxforwp").attr("data-fancybox", "gallery").getTitle();
-		iframeLinks.attr({"data-fancybox": "gallery"}).getTitle();
+<!--noindex-->
+<div class="overlay" id="overlay">
+  <div class="login-box" id="login-box">
+    <div class="login-title">Авторизация</div>
+    <div class="login-social clearfix"></div>
+    <div class="login-form">
+      <form method="post">
+        <div class="login-input">
+          <input type="text" name="login_name" id="login_name"
+            placeholder="Логин:" />
+        </div>
+        <div class="login-input">
+          <input type="password" name="login_password" id="login_password"
+            placeholder="Пароль" />
+        </div>
+        <div class="login-button">
+          <button type="submit" title="Вход">Войти на сайт</button>
+          <input name="login" type="hidden" id="login" value="submit" />
+        </div>
+        <div class="login-checkbox">
+          <input type="checkbox" name="login_not_save" id="login_not_save"
+            value="1" />
+          <label for="login_not_save">&nbsp;Чужой компьютер</label>
+        </div>
+        <div class="login-links clearfix">
+          <a href="https://kinogoo.fm/index.php?do=lostpassword">Забыли пароль?</a>
+          <a href="https://kinogoo.fm/index.php?do=register" class="log-register">Регистрация</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--/noindex-->
 
-		// Gallery type NONE
-		
-		// Call fancybox and apply it on any link with a rel atribute that starts with "fancybox", with the options set on the admin panel
-		jQuery("a.fancyboxforwp").fancyboxforwp({
-			loop: false,
-			smallBtn: true,
-			zoomOpacity: "auto",
-			animationEffect: "fade",
-			animationDuration: 500,
-			transitionEffect: "fade",
-			transitionDuration: "300",
-			overlayShow: true,
-			overlayOpacity: "0.3",
-			titleShow: true,
-			titlePosition: "float",
-			keyboard: true,
-			showCloseButton: true,
-			arrows: true,
-			clickContent:false,
-			clickSlide: "close",
-			mobile: {
-				clickContent: function (current, event) {
-					return current.type === "image" ? "toggleControls" : false;
-				},
-				clickSlide: function (current, event) {
-					return current.type === "image" ? "close" : "close";
-				},
-			},
-			wheel: false,
-			toolbar: true,
-			preventCaptionOverlap: true,
-			onInit: function() { },			onDeactivate
-	: function() { },		beforeClose: function() { },			afterShow: function() {},				afterClose: function() { },					caption : function( instance, item ) {var title ="";if("undefined" != typeof jQuery(this).context ){var title = jQuery(this).context.title;} else { var title = ("undefined" != typeof jQuery(this).attr("title")) ? jQuery(this).attr("title") : false;}var caption = jQuery(this).data('caption') || '';if ( item.type === 'image' && title.length ) {caption = (caption.length ? caption + '<br />' : '') + '<p class="caption-title">'+title+'</p>' ;}return caption;},
-		afterLoad : "",
-			})
-		;
 
-			})</script> <meta name="generator" content="Site Kit by Google 1.45.0" /><meta name="google-adsense-platform-account" content="ca-host-pub-2644536267352236"><meta name="google-adsense-platform-domain" content="sitekit.withgoogle.com"> <style type="text/css">body .site-title a,
-            .site-header .site-branding .site-title a:visited,
-            .site-header .site-branding .site-title a:hover,
-            .site-description {
-                color: #ffffff;
-            }
+    <!--/noindex-->
+  </div>
+</header>
+
+
+        <div class="ad-branding">
+<ins class="7236739a" data-key="3cab6f1ea49b0e2a51a3a67c17515071"></ins>
+</div>
+<style>
+@media (max-width: 930px) {
+    .ad-branding {
+        min-height: 27vw;
+        padding-top: 50px;
+    }
+}
+
+
+@media (min-width: 931px) {
+    .ad-branding {
+       height:250px;
+padding-top: 50px;
+    }
+}
+</style>
+      <div class="block center">
+        <ul class="first-menu clearfix">
+          <li><a href="/" class="active" rel="nofollow">Главная</a></li>
+          <li><a href="/novinki/">Новинки</a></li>
+          <li><a class="fiolet" href="/licenzija/">Лицензия HD</a></li>
+          <li><a href="/kino-2024/">Фильмы 2024</a></li>
+          <li><a href="/zarubezhnye-serialy/">Сериалы</a></li>
+          <li><a href="/camrip-i-ts/" class="orange">CAMRip | TS</a></li>
+        </ul>
+
+        <div class="carousel-wr">
+          <div id="owl-carou">
+            <div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-09/4745367_1757113118.webp" alt="Последний атлант" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3228-poslednij-atlant-2025.html" data-link="https://kinogoo.fm/3228-poslednij-atlant-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-06/5309710_1751127515.webp" alt="Дьявол" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3072-djavol-2025.html" data-link="https://kinogoo.fm/3072-djavol-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-11/1378893_1762614361.webp" alt="Бугония" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3360-bugonija-2025.html" data-link="https://kinogoo.fm/3360-bugonija-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-08/1287545_1754945489.webp" alt="Фантастическая четвёрка: Первые шаги" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3172-fantasticheskaja-chetverka-pervye-shagi-2025.html" data-link="https://kinogoo.fm/3172-fantasticheskaja-chetverka-pervye-shagi-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-10/1290942_1760729594.webp" alt="Долгая прогулка" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3298-dolgaja-progulka-2025.html" data-link="https://kinogoo.fm/3298-dolgaja-progulka-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-11/8075521_1762614616.webp" alt="Сожалею о тебе" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3364-sozhaleju-o-tebe-2025.html" data-link="https://kinogoo.fm/3364-sozhaleju-o-tebe-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-09/8388878_1759059399.webp" alt="Альтер" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3278-alter-2025.html" data-link="https://kinogoo.fm/3278-alter-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-10/4887346_1759611523.webp" alt="Грязная игра" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3292-grjaznaja-igra-2025.html" data-link="https://kinogoo.fm/3292-grjaznaja-igra-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  <img data-src="/uploads/posts/2025-11/1762614037_600x900-3.webp" alt="Разрушитель миров" width="100%" height="100%" class="lazyOwl" />
+  
+  <a class="carou-inner" href="https://kinogoo.fm/3356-razrushitel-mirov.html" data-link="https://kinogoo.fm/3356-razrushitel-mirov.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  <img data-src="/uploads/posts/2025-10/600x900-3.webp" alt="Астронавт" width="100%" height="100%" class="lazyOwl" />
+  
+  <a class="carou-inner" href="https://kinogoo.fm/3291-astronavt-2025.html" data-link="https://kinogoo.fm/3291-astronavt-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-11/464475_1762468085.webp" alt="Франкенштейн" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3351-frankenshtejn-2025.html" data-link="https://kinogoo.fm/3351-frankenshtejn-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-10/5437094_1759605273.webp" alt="Битва за битвой" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3279-bitva-za-bitvoj-2025-hd.html" data-link="https://kinogoo.fm/3279-bitva-za-bitvoj-2025-hd.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-08/5505959_1755252517.webp" alt="Чумовая пятница 2" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3191-chumovaja-pjatnica-2-2025.html" data-link="https://kinogoo.fm/3191-chumovaja-pjatnica-2-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-09/6403229_1758447596.webp" alt="Беги" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3266-begi-2025.html" data-link="https://kinogoo.fm/3266-begi-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  <img data-src="/uploads/posts/2025-08/1756376243_600x900.webp" alt="Всеведущий читатель" width="100%" height="100%" class="lazyOwl" />
+  
+  <a class="carou-inner" href="https://kinogoo.fm/3202-vseveduschij-chitatel-2025.html" data-link="https://kinogoo.fm/3202-vseveduschij-chitatel-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-07/8043830_1752966259.webp" alt="Кей-поп-охотницы на демонов" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3111-kejpopershi-ohotnicy-na-demonov-2025.html" data-link="https://kinogoo.fm/3111-kejpopershi-ohotnicy-na-demonov-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-06/5430363_1749856863.webp" alt="Финал" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3053-final-2025.html" data-link="https://kinogoo.fm/3053-final-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-10/7572807_1759608494.webp" alt="Точка замерзания" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3287-tochka-zamerzanija-2025.html" data-link="https://kinogoo.fm/3287-tochka-zamerzanija-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  
+  <img data-src="/uploads/posts/2025-09/5146965_1757270289.webp" alt="Заклятие 4: Последний обряд" width="100%" height="100%" class="lazyOwl" />
+  <a class="carou-inner" href="https://kinogoo.fm/3235-zakljatie-4-poslednij-obrjad-2025.html" data-link="https://kinogoo.fm/3235-zakljatie-4-poslednij-obrjad-2025.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+<div class="carou img-box">
+  <img data-src="/uploads/posts/2025-10/600x900-4.webp" alt="Сводишь с ума" width="100%" height="100%" class="lazyOwl" />
+  
+  <a class="carou-inner" href="https://kinogoo.fm/3308-svodish-s-uma.html" data-link="https://kinogoo.fm/3308-svodish-s-uma.html">
+    <i class="fa fa-play-circle-o"></i>
+  </a>
+</div>
+
+          </div>
+        </div>
+
+        <div style="margin-top: -20px"></div>
+
+        <div class="cols clearfix" id="cols">
+          <div class="col-cont">
             
-            .site-branding-text .site-title a {
-                font-size: 48px;
-            }
+            <div class="rocet"></div>
+<div class="speedbar">
+  <a href="https://kinogoo.fm/">Киного</a> » <a href="https://kinogoo.fm/zarubezhnye-serialy/">Зарубежные сериалы</a> » Во все тяжкие 1-5 сезон смотреть онлайн бесплатно
+</div>
+            
+            
+              <div class="kino-item ignore-select" id="kino-page" data-bg>
+  <!--noindex--><center><div id="movie_video"></div><script type="text/javascript" src="https://21wiz.com/s.js?v=0c997cf69f581828918e5628b49e825e" async></script></center><!--/noindex--><br/><br/>
+  <div class="kino-title">
+    <div class="kino-h">
+      <h1>Во все тяжкие 1-5 сезон
+        (2008)</h1>
 
-            @media only screen and (max-width: 640px) {
-                .site-branding-text .site-title a {
-                    font-size: 40px;
+    </div>
+    <div class="orig">Breaking Bad</div>
+    <div class="kino-info">
+      <div style="margin-top: -4px"></div>
+      
+      <div class="imdb" data-label="IMDB">IMDb 9.5</div>
+      
+      
+      <div class="kp" data-label="KP">
+        KP 8.91
+      </div>
+      
+      
+      
+      <div class="k-fav fav-guest"
+        data-label="Для добавления в закладки необходима регистрация">
+        <i class="fa fa-star-o"></i>
+      </div>
+      
+    </div>
+  </div>
+  <div style="margin-top: -8px"></div>
 
-                }
-            }
+  <div class="fcols clearfix">
+    <div class="fposter">
+      <img src="/uploads/posts/2023-12/852-vo-vse-tjazhkie-1-5-sezon.jpg" width="100%" height="100%" alt="Во все тяжкие 1-5 сезон" title="Во все тяжкие 1-5 сезон" />
+      
+    </div>
 
-            @media only screen and (max-width: 375px) {
-                .site-branding-text .site-title a {
-                    font-size: 32px;
+    <div class="finfo">
+      
+      <hr />
+      <div class="k-label">Качество:</div>
+      <div class="kac">WEB-DL</div>
+      
 
-                }
-            }</style> <script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8792581824719950" crossorigin="anonymous"></script> <link rel="icon" href="https://remontka.com/wp-content/uploads/remontka_all/cropped-fav2-32x32.png" sizes="32x32" /><link rel="icon" href="https://remontka.com/wp-content/uploads/remontka_all/cropped-fav2-192x192.png" sizes="192x192" /><link rel="apple-touch-icon" href="https://remontka.com/wp-content/uploads/remontka_all/cropped-fav2-180x180.png" /><meta name="msapplication-TileImage" content="https://remontka.com/wp-content/uploads/remontka_all/cropped-fav2-270x270.png" />  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PQ2JR67T2G"></script> <script>window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+      
 
-  gtag('config', 'G-PQ2JR67T2G');</script> <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8792581824719950"
-     crossorigin="anonymous"></script> </head><body class="wp-singular post-template-default single single-post postid-105280 single-format-standard wp-theme-newses wide elementor-default elementor-kit-5" ><div id="page" class="site"> <a class="skip-link screen-reader-text" href="#content"> Перейти к содержимому</a><div class="wrapper" id="custom-background-css"><header class="mg-headwidget"><div class="mg-head-detail d-none d-md-block"><div class="container"><div class="row align-items-center"><div class="col-md-6 col-xs-12 col-sm-6"><ul class="info-left"><li><i class="fa fa-calendar ml-3"></i></li></ul></div></div></div></div><div class="clearfix"></div><div class="mg-nav-widget-area-back" style='background-image: url("https://remontka.com/wp-content/uploads/generalinfo/shutterstock_130285649.jpg" );'><div class="overlay"><div class="inner"  style="background-color:rgba(21,21,51,0.2);" ><div class="container"><div class="mg-nav-widget-area"><div class="row align-items-center"><div class="col-md-4 text-center-xs"><div class="site-branding-text"><h1 class="site-title"> <a href="https://remontka.com/" rel="home">РЕМОНТКА</a></h1><p class="site-description"></p></div></div><div class="col-md-8 text-center-xs"><div class="mg-tpt-tag-area"></div></div></div></div></div></div></div></div><div class="mg-menu-full"><nav class="navbar navbar-expand-lg navbar-wp"><div class="container"><div class="m-header align-items-center"> <a class="mobilehomebtn" href="https://remontka.com"><span class="fa fa-home"></span></a> <button class="navbar-toggler collapsed mr-auto" type="button" data-toggle="collapse" data-target="#navbar-wp" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="my-1 mx-2 close">X</span> <span class="navbar-toggler-icon"></span> </button><div class="dropdown show mg-search-box"> <a class="dropdown-toggle msearch ml-auto" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-search"></i> </a><div class="dropdown-menu searchinner" aria-labelledby="dropdownMenuLink"><form role="search" method="get" id="searchform" action="https://remontka.com/"><div class="input-group"> <input type="search" class="form-control" placeholder="Поиск" value="" name="s" /> <span class="input-group-btn btn-default"> <button type="submit" class="btn"> <i class="fa fa-search"></i> </button> </span></div></form></div></div></div><div class="collapse navbar-collapse" id="navbar-wp"><ul id="menu-main" class="nav navbar-nav mr-auto"><li class="active home"><a class="nav-link homebtn" title="Home" href="https://remontka.com"><span class='fa fa-home'></span></a></li><li id="menu-item-32735" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32735"><a class="nav-link" title="Будни сисадмина" href="https://remontka.com/category/budni_sysadmina/">Будни сисадмина</a></li><li id="menu-item-28621" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-28621 dropdown"><a class="nav-link" title="Мой компьютер" href="https://remontka.com/my-computer/" data-toggle="dropdown" class="dropdown-toggle">Мой компьютер </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-28550" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28550"><a class="dropdown-item" title="Для начинающих" href="https://remontka.com/category/beginner/">Для начинающих</a></li><li id="menu-item-35382" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35382"><a class="dropdown-item" title="Компьютеры" href="https://remontka.com/category/computers/">Компьютеры</a></li><li id="menu-item-35381" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35381"><a class="dropdown-item" title="Компьютерные сети" href="https://remontka.com/category/networking/">Компьютерные сети</a></li><li id="menu-item-35374" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35374"><a class="dropdown-item" title="USB Flash Drive" href="https://remontka.com/category/usb-flash-drive/">USB Flash Drive</a></li><li id="menu-item-35393" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35393"><a class="dropdown-item" title="Шифрование" href="https://remontka.com/category/encryption/">Шифрование</a></li><li id="menu-item-28555" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28555"><a class="dropdown-item" title="Мобильные устройства" href="https://remontka.com/category/mobile/">Мобильные устройства</a></li><li id="menu-item-96733" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96733"><a class="dropdown-item" title="Смартфоны" href="https://remontka.com/category/smartfony/">Смартфоны</a></li><li id="menu-item-35391" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35391"><a class="dropdown-item" title="Технологии" href="https://remontka.com/category/technology/">Технологии</a></li><li id="menu-item-35392" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35392"><a class="dropdown-item" title="Информация о технологиях" href="https://remontka.com/category/technology-explained/">Информация о технологиях</a></li><li id="menu-item-35383" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35383"><a class="dropdown-item" title="Новости IT технологий" href="https://remontka.com/category/news-it-technology/">Новости IT технологий</a></li><li id="menu-item-28551" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28551"><a class="dropdown-item" title="Другое" href="https://remontka.com/category/other/">Другое</a></li><li id="menu-item-28564" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28564"><a class="dropdown-item" title="Разное" href="https://remontka.com/category/misc/">Разное</a></li><li id="menu-item-28569" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28569"><a class="dropdown-item" title="Статьи" href="https://remontka.com/category/articles/">Статьи</a></li><li id="menu-item-28557" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28557"><a class="dropdown-item" title="Новости" href="https://remontka.com/category/news/">Новости</a></li><li id="menu-item-35387" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35387"><a class="dropdown-item" title="Программы" href="https://remontka.com/category/program/">Программы</a></li><li id="menu-item-96730" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96730"><a class="dropdown-item" title="Менеджмент и упраление" href="https://remontka.com/category/menedzhment-i-upralenie/">Менеджмент и упраление</a></li><li id="menu-item-96735" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96735"><a class="dropdown-item" title="Финансы" href="https://remontka.com/category/finansy/">Финансы</a></li></ul></li><li id="menu-item-28540" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-28540 dropdown"><a class="nav-link" title="Hardware" href="https://remontka.com/category/hardware/" data-toggle="dropdown" class="dropdown-toggle">Hardware </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-28565" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28565"><a class="dropdown-item" title="Ремонт компьютеров" href="https://remontka.com/category/compyuterov/">Ремонт компьютеров</a></li><li id="menu-item-28558" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28558"><a class="dropdown-item" title="Ноутбуки" href="https://remontka.com/category/notebooks/">Ноутбуки</a></li><li id="menu-item-35370" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35370"><a class="dropdown-item" title="Обзор оборудования" href="https://remontka.com/category/equipment-overview/">Обзор оборудования</a></li><li id="menu-item-28556" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28556"><a class="dropdown-item" title="Настройка роутера" href="https://remontka.com/category/wifi/">Настройка роутера</a></li><li id="menu-item-96736" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96736"><a class="dropdown-item" title="Электроника" href="https://remontka.com/category/elektronika/">Электроника</a></li><li id="menu-item-31390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-31390 dropdown"><a class="dropdown-item" title="радиоэлектроника" href="https://remontka.com/category/radioelektronika/">радиоэлектроника</a><ul role="menu" class=" dropdown-menu"><li id="menu-item-32698" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32698"><a class="dropdown-item" title="Ремонтируем домашние компьютеры" href="https://remontka.com/category/rjemontirujem-sami/">Ремонтируем домашние компьютеры</a></li><li id="menu-item-32693" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32693"><a class="dropdown-item" title="Arduino" href="https://remontka.com/category/arduino/">Arduino</a></li><li id="menu-item-32694" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32694"><a class="dropdown-item" title="AVR" href="https://remontka.com/category/avr/">AVR</a></li><li id="menu-item-32695" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32695"><a class="dropdown-item" title="КМБ" href="https://remontka.com/category/kmb/">КМБ</a></li><li id="menu-item-32700" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32700"><a class="dropdown-item" title="Схемы для начинающих" href="https://remontka.com/category/skhemy-dlya-nachinayushhikh/">Схемы для начинающих</a></li><li id="menu-item-32692" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32692"><a class="dropdown-item" title="статьи по электронике" href="https://remontka.com/category/stati-po-elektronike/">статьи по электронике</a></li><li id="menu-item-32697" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32697"><a class="dropdown-item" title="Программки" href="https://remontka.com/category/programmki/">Программки</a></li><li id="menu-item-32701" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32701"><a class="dropdown-item" title="Инструменты и приборы" href="https://remontka.com/category/slovar-tjerminov/">Инструменты и приборы</a></li><li id="menu-item-32696" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32696"><a class="dropdown-item" title="Мысли вслух" href="https://remontka.com/category/mysli-vslukh/">Мысли вслух</a></li></ul></li></ul></li><li id="menu-item-28559" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-28559 dropdown"><a class="nav-link" title="Операционная система" href="https://remontka.com/category/operatsionnaya-sistema/" data-toggle="dropdown" class="dropdown-toggle">Операционная система </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-28543" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28543"><a class="dropdown-item" title="Windows" href="https://remontka.com/category/windows/">Windows</a></li><li id="menu-item-35376" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35376"><a class="dropdown-item" title="Windows" href="https://remontka.com/category/windows/">Windows</a></li><li id="menu-item-28541" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28541"><a class="dropdown-item" title="iOS и MacOS" href="https://remontka.com/category/appleos/">iOS и MacOS</a></li><li id="menu-item-35372" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35372"><a class="dropdown-item" title="linux" href="https://remontka.com/category/linux/">linux</a></li><li id="menu-item-31389" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-31389"><a class="dropdown-item" title="Android" href="https://remontka.com/category/android/">Android</a></li><li id="menu-item-28567" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28567"><a class="dropdown-item" title="Система" href="https://remontka.com/category/system/">Система</a></li></ul></li><li id="menu-item-28542" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-28542 dropdown"><a class="nav-link" title="Software" href="https://remontka.com/category/software/" data-toggle="dropdown" class="dropdown-toggle">Software </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-28546" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28546"><a class="dropdown-item" title="Безопасность" href="https://remontka.com/category/security/">Безопасность</a></li><li id="menu-item-28548" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28548"><a class="dropdown-item" title="Восстановление данных" href="https://remontka.com/category/vosstanovlenie/">Восстановление данных</a></li><li id="menu-item-28553" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28553"><a class="dropdown-item" title="Интернет" href="https://remontka.com/category/internet/">Интернет</a></li><li id="menu-item-35379" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35379"><a class="dropdown-item" title="Интернет Куки - cookie" href="https://remontka.com/category/cookie/">Интернет Куки &#8212; cookie</a></li><li id="menu-item-96732" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96732"><a class="dropdown-item" title="Программирование" href="https://remontka.com/category/programming/">Программирование</a></li><li id="menu-item-35390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35390"><a class="dropdown-item" title="Регистрация в сервисах" href="https://remontka.com/category/check-in-services/">Регистрация в сервисах</a></li><li id="menu-item-35384" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35384"><a class="dropdown-item" title="Программирование" href="https://remontka.com/category/programming/">Программирование</a></li><li id="menu-item-35378" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35378"><a class="dropdown-item" title="Базы данных" href="https://remontka.com/category/database/">Базы данных</a></li><li id="menu-item-28554" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28554"><a class="dropdown-item" title="Лечение вирусов" href="https://remontka.com/category/virus/">Лечение вирусов</a></li><li id="menu-item-28562" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28562"><a class="dropdown-item" title="Программы" href="https://remontka.com/category/soft/">Программы</a></li><li id="menu-item-96734" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96734"><a class="dropdown-item" title="Софт" href="https://remontka.com/category/soft2/">Софт</a></li><li id="menu-item-28570" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28570"><a class="dropdown-item" title="Файлы" href="https://remontka.com/category/files/">Файлы</a></li><li id="menu-item-32699" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-32699"><a class="dropdown-item" title="Ремонты по мелочи" href="https://remontka.com/category/remonty-po-melochi/">Ремонты по мелочи</a></li><li id="menu-item-35389" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35389"><a class="dropdown-item" title="Разное (Software)" href="https://remontka.com/category/raznoe-software/">Разное (Software)</a></li></ul></li><li id="menu-item-28560" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-28560 dropdown"><a class="nav-link" title="Про Web" href="https://remontka.com/category/about-web/" data-toggle="dropdown" class="dropdown-toggle">Про Web </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-28547" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28547"><a class="dropdown-item" title="Верстка (HTML, CSS)" href="https://remontka.com/category/verstka-html-css/">Верстка (HTML, CSS)</a></li><li id="menu-item-35375" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35375"><a class="dropdown-item" title="Web-development" href="https://remontka.com/category/web-development/">Web-development</a></li><li id="menu-item-28563" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28563"><a class="dropdown-item" title="Продвижение сайтов" href="https://remontka.com/category/prodvizhenie-sajtov/">Продвижение сайтов</a></li><li id="menu-item-35373" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35373"><a class="dropdown-item" title="SEO" href="https://remontka.com/category/seo/">SEO</a></li><li id="menu-item-96731" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96731"><a class="dropdown-item" title="Оптимизация сайтов" href="https://remontka.com/category/optimizaciya-sajtov/">Оптимизация сайтов</a></li><li id="menu-item-28561" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28561"><a class="dropdown-item" title="Программирование" href="https://remontka.com/category/programmirovanie/">Программирование</a></li><li id="menu-item-35368" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-35368 dropdown"><a class="dropdown-item" title="CMS" href="https://remontka.com/category/cms/">CMS</a><ul role="menu" class=" dropdown-menu"><li id="menu-item-35371" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35371"><a class="dropdown-item" title="Joomla" href="https://remontka.com/category/joomla/">Joomla</a></li><li id="menu-item-35377" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35377"><a class="dropdown-item" title="WordPress" href="https://remontka.com/category/wordpress/">WordPress</a></li></ul></li><li id="menu-item-35369" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-35369"><a class="dropdown-item" title="CMS - Разное" href="https://remontka.com/category/varia/">CMS &#8212; Разное</a></li><li id="menu-item-28549" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28549"><a class="dropdown-item" title="Дизайн и графика" href="https://remontka.com/category/dizajn-i-grafika/">Дизайн и графика</a></li><li id="menu-item-28544" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28544"><a class="dropdown-item" title="Администрирование" href="https://remontka.com/category/administrirovanie/">Администрирование</a></li><li id="menu-item-28568" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28568"><a class="dropdown-item" title="Системы управления" href="https://remontka.com/category/sistemy-upravleniya/">Системы управления</a></li><li id="menu-item-28552" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28552"><a class="dropdown-item" title="Заметки и статьи" href="https://remontka.com/category/zametki-i-stati/">Заметки и статьи</a></li></ul></li><li id="menu-item-28699" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-28699 dropdown"><a class="nav-link" title="Майнинг" href="https://remontka.com/category/mining/" data-toggle="dropdown" class="dropdown-toggle">Майнинг </a><ul role="menu" class=" dropdown-menu"><li id="menu-item-96729" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-96729"><a class="dropdown-item" title="Криптовалюта" href="https://remontka.com/category/kriptovalyuta/">Криптовалюта</a></li><li id="menu-item-30579" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30579"><a class="dropdown-item" title="Майнинг архив: Криптовалюта" href="https://remontka.com/category/majning-arhiv-kriptovalyuta/">Майнинг архив: Криптовалюта</a></li><li id="menu-item-30580" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30580"><a class="dropdown-item" title="Майнинг архив: Новости криптовалют" href="https://remontka.com/category/majning-arhiv-novosti-kriptovalyut/">Майнинг архив: Новости криптовалют</a></li><li id="menu-item-30581" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30581"><a class="dropdown-item" title="Майнинг архив: Общие вопросы" href="https://remontka.com/category/majning-arhiv-obschie-voprosy/">Майнинг архив: Общие вопросы</a></li><li id="menu-item-30578" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30578"><a class="dropdown-item" title="Майнинг архив: Железо" href="https://remontka.com/category/majning-arhiv-zhelezo/">Майнинг архив: Железо</a></li><li id="menu-item-30576" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30576"><a class="dropdown-item" title="Майнинг архив: Airdrop и Краны" href="https://remontka.com/category/majning-arhiv-airdrop-i-krany/">Майнинг архив: Airdrop и Краны</a></li><li id="menu-item-30577" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30577"><a class="dropdown-item" title="Майнинг архив: ICO" href="https://remontka.com/category/majning-arhiv-ico/">Майнинг архив: ICO</a></li><li id="menu-item-30582" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30582"><a class="dropdown-item" title="Майнинг архив: Софт" href="https://remontka.com/category/majning-arhiv-soft/">Майнинг архив: Софт</a></li></ul></li><li id="menu-item-220" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-220"><a class="nav-link" title="Контакты" href="https://remontka.com/contact/">Контакты</a></li></ul></div><div class="desk-header pl-3 ml-auto my-2 my-lg-0 position-relative align-items-center"><div class="dropdown show mg-search-box"> <a class="dropdown-toggle msearch ml-auto" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-search"></i> </a><div class="dropdown-menu searchinner" aria-labelledby="dropdownMenuLink"><form role="search" method="get" id="searchform" action="https://remontka.com/"><div class="input-group"> <input type="search" class="form-control" placeholder="Поиск" value="" name="s" /> <span class="input-group-btn btn-default"> <button type="submit" class="btn"> <i class="fa fa-search"></i> </button> </span></div></form></div></div></div></div></nav></div></header><div class="clearfix"></div><main id="content"><div class="container"><div class="row"><div class="col-md-12"><div class="mg-header mb-30"><div class="mg-blog-category mb-1"> <a class="newses-categories category-color-1" href="https://remontka.com/category/windows-10/" alt="Просмотреть все записи в рубрике &laquo;Windows 10&raquo;"> Windows 10 </a><a class="newses-categories category-color-1" href="https://remontka.com/category/windows-7/" alt="Просмотреть все записи в рубрике &laquo;Windows 7&raquo;"> Windows 7 </a></div><h1 class="title">Высокая загрузка CPU процессом System (Ntoskrnl.exe) в Windows</h1><div class="media mg-info-author-block"><div class="media-body"></div></div></div></div><div class="col-md-9"><div class="mg-blog-post-box"><article class="small single p-3"><div><p> На одном их компьютеров с только что установленной Windows 10 пользователь стал жаловаться на постоянные зависания и медленную работу ОС. В диспетчере устройств видно, что более 50% ресурсов процессора используется процесс <strong> System </strong> ( <strong> ntoskrnl.exe </strong> ). В этой статье я постараюсь описать основные методики диагностики высокой загрузки CPU различными процессами и методы выявления проблемного компонента Windows.</p><p> <span id="more-7661"> </span></p><p> <img fetchpriority="high" decoding="async" alt="процесс system высокая нагрузка на процессор" class="wp-image-7662" height="382" sizes="(max-width: 624px) 100vw, 624px" src="https://remontka.com/wp-content/uploads/ito/2018/03/process-system-vysokaya-nagruzka-na-processor.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/process-system-vysokaya-nagruzka-na-processor.png 648w, https://remontka.com/wp-content/uploads/ito/2018/03/process-system-vysokaya-nagruzka-na-processor-300x184.png 300w" width="624"/></p><p> Ситуация, когда процесс System потребляет более половины процессорных ресурсов системы — это не нормально. Сам по себе файл Ntoskrnl.exe представляет собой исполняемый файл ядра ОС. Это базовый процесс системы. В рамках ядра ОС выполняется запуск системных драйверов устройств, которые скорее всего и являются источником проблемы (далеко не все драйверы соответствующим образом тестируются разработчиками оборудования).</p><p> Как правило, проблема утечки в коде драйверов и высокая нагрузка на процессор, память или диск возникает после установки нового оборудования, установки новой версии драйвера (в том числе при автоматическом обновлении драйверов, которое можно <a href="https://remontka.com/otklyuchaem-avtomaticheskoe-obnovlenie-drajverov-v-windows-10/"> отключить </a> ) или после апгрейда Windows.</p><div> <strong> Совет </strong> . В некоторых случаях высокую нагрузки на процессор и память может вызывать процесс <a href="https://remontka.com/compressed-memory-windows-10/"> Система и сжатая память </a></div><p> Чтобы понять, какой конкретно драйвер или модуль вызывает высокую загрузку процессора можно воспользоваться бесплатной утилитой <strong> Process Explorer </strong> . Скачайте и запустите ее с правами администратора.</p><p> В списке запушенных процессов найдите процесс <strong> System </strong> , щелкните по нему ПКМ и откройте его свойства <strong> Properties </strong> .</p><p> <img decoding="async" alt="свойства процесса system в process explorer" class="wp-image-7663" height="337" sizes="(max-width: 475px) 100vw, 475px" src="https://remontka.com/wp-content/uploads/ito/2018/03/svojstva-processa-system-v-process-explorer.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/svojstva-processa-system-v-process-explorer.png 523w, https://remontka.com/wp-content/uploads/ito/2018/03/svojstva-processa-system-v-process-explorer-300x213.png 300w" width="475"/></p><p> Перейдите на вкладку <strong> Threads </strong> . Отсортируйте список модулей, загруженных ядром по степени использования процессора (столбец CPU). В строке <strong> Start Address </strong> указано имя функции или драйвера, вызывающего высокую загрузку (скриншот не с проблемной системы).</p><p> <img decoding="async" alt="потоки и драйвера в процессе system" class="wp-image-7664" height="495" sizes="(max-width: 408px) 100vw, 408px" src="https://remontka.com/wp-content/uploads/ito/2018/03/potoki-i-drajvera-v-processe-system.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/potoki-i-drajvera-v-processe-system.png 448w, https://remontka.com/wp-content/uploads/ito/2018/03/potoki-i-drajvera-v-processe-system-248x300.png 248w" width="408"/></p><p> Также, чтобы выявить драйвер, который вызывает высокую загрузку CPU, можно воспользоваться бесплатной утилитой Microsoft — <strong> kernrate.exe </strong> (Kernrate Viewer). Утилита входит в состав <strong> WDK </strong> (Windows Device Kit). После установки WDK, найти утилиту можно в каталоге …ToolsOtheramd64.</p><p> Запустите утилиту <strong> kernrate.exe </strong> без аргументов и подождите некоторое время, пока идет сбор данных (10-15 минут), после чего прервите работу утилиты сочетанием клавиш <strong> Ctrl-C </strong> : Посмотрите на список модулей в секции <strong> Result for Kernel Mode </strong> .</p><p> <img loading="lazy" decoding="async" alt="kernrate.exe " class="wp-image-7665" height="144" sizes="auto, (max-width: 526px) 100vw, 526px" src="https://remontka.com/wp-content/uploads/ito/2018/03/kernrate-exe.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/kernrate-exe.png 537w, https://remontka.com/wp-content/uploads/ito/2018/03/kernrate-exe-300x82.png 300w" width="526"/></p><p> Как вы видите, в нашем примере высокую нагрузку на CPU вызывает модуль <strong> b57nd60x </strong> . С помощью Google или утилиты sigcheck (смотри <a href="https://remontka.com/high-non-paged-pool-windows/"> пример </a> ) можно определить, что проблему вызывает драйвер сетевой карты Broadcom NetXtream Gigabit Ethernet NDIS6.0 Driver.</p><p> Кроме того, проанализировать использование CPU при загрузки системы можно с помощью Windows Performance Toolkit (WPT). Нужно установить компонент и запустить сбор данных с помощью графической консоли <strong> Windows Perfomance Recorder </strong> (First level triangle + CPU usage -&gt; Start)</p><p> <img loading="lazy" decoding="async" alt="Windows Perfomance Recorder - анализ нагрузки на CPU" class="wp-image-7666" height="407" sizes="auto, (max-width: 639px) 100vw, 639px" src="https://remontka.com/wp-content/uploads/ito/2018/03/windows-perfomance-recorder-analiz-nagruzki-na.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/windows-perfomance-recorder-analiz-nagruzki-na.png 680w, https://remontka.com/wp-content/uploads/ito/2018/03/windows-perfomance-recorder-analiz-nagruzki-na-300x191.png 300w" width="639"/></p><p> Либо так:</p><p> <code> xperf -on latency -stackwalk profile -buffersize 1024 -MaxFile 256 -FileMode Circular &amp;&amp; timeout -1 &amp;&amp; xperf -d cpuusage.etl </code></p><p><div> <strong> Совет </strong> . Этот способ удобно использовать, если после загрузки система напрочь зависает и работать в ней просто невозможно. Скорее всего вам также будет полезна статья с методикой диагностики <a href="https://remontka.com/diagnostika-medlennoj-zagruzki-windows-s-pomoshhyu-process-monitor/"> долгой загрузки Windows </a> .</div><p> Полученный файл нужно сохранить и открыть в WPA. Разверните стек процесса System. В этом примере видно, что высокую нагрузку на процессор вызывает драйвер <strong> athrx.sys </strong> (Wi-Fi адаптер Atheros Wireless Network Adapter).</p><p> <img loading="lazy" decoding="async" alt="выявление драйвера, который сильно загружает процессор в Windows" class="wp-image-7667" height="326" sizes="auto, (max-width: 649px) 100vw, 649px" src="https://remontka.com/wp-content/uploads/ito/2018/03/vyyavlenie-drajvera-kotoryj-silno-zagruzhaet-proce.png" srcset="https://remontka.com/wp-content/uploads/ito/2018/03/vyyavlenie-drajvera-kotoryj-silno-zagruzhaet-proce.png 1164w, https://remontka.com/wp-content/uploads/ito/2018/03/vyyavlenie-drajvera-kotoryj-silno-zagruzhaet-proce-300x151.png 300w, https://remontka.com/wp-content/uploads/ito/2018/03/vyyavlenie-drajvera-kotoryj-silno-zagruzhaet-proce-768x385.png 768w" width="649"> <br /> Итак, проблемный драйвер обнаружен. Что делать дальше? </img></p><p> Для решения проблемы нужно попробовать установить более новую (или старую) версию драйвера или же совсем отключить оборудование, если проблема наблюдается со всеми версиями драйвера. Обновленный драйвер можно дополнительно проверить стресс-тестом с помощью <a href="https://remontka.com/driver-verifier-vyyavlyaem-problemnye-drajvera-windows/"> Driver Verifier </a> .</p></p></div><div class="clearfix mb-3"></div><nav class="navigation post-navigation" aria-label="Записи"><h2 class="screen-reader-text">Навигация по записям</h2><div class="nav-links"><div class="nav-previous"><a href="https://remontka.com/peredacha-failov-po-wifi-nearby-sharing-win10/" rel="prev">Обмен файлами с устройствами поблизости (Nearby sharing) в Windows 10 1803<div class="fa fa-angle-double-right"></div><span></span></a></div><div class="nav-next"><a href="https://remontka.com/vklyuchit-vse-yadra-processora-v-windows-10/" rel="next"><div class="fa fa-angle-double-left"></div><span></span> Включить все ядра процессора в Windows 10/11</a></div></div></nav></article></div><div class="clearfix mb-4"></div><div class="wd-back"><div class="mg-sec-title st3"><h4><span class="bg">Похожая запись</span></h4></div><div class="small-list-post row"><div class="small-post media col-md-6 col-sm-6 col-xs-12"><div class="img-small-post back-img" style="background-image: url('');"> <a href="https://remontka.com/sreda-vosstanovleniya-windows-re/" class="link-div"></a></div><div class="small-post-content media-body"><div class="mg-blog-category"> <a class="newses-categories category-color-1" href="https://remontka.com/category/windows-7/" alt="Просмотреть все записи в рубрике &laquo;Windows 7&raquo;"> Windows 7 </a></div><h5 class="title"><a href="https://remontka.com/sreda-vosstanovleniya-windows-re/" title="Permalink to: Среда восстановления Windows (RE)"> Среда восстановления Windows (RE)</a></h5><div class="mg-blog-meta"> <a href="https://remontka.com/author/admin/"> <i class="fa fa-user-circle-o"></i> admin</a></div></div></div><div class="small-post media col-md-6 col-sm-6 col-xs-12"><div class="img-small-post back-img" style="background-image: url('');"> <a href="https://remontka.com/pravilnyj-sposob-otklyucheniya-ipv6/" class="link-div"></a></div><div class="small-post-content media-body"><div class="mg-blog-category"> <a class="newses-categories category-color-1" href="https://remontka.com/category/windows-7/" alt="Просмотреть все записи в рубрике &laquo;Windows 7&raquo;"> Windows 7 </a></div><h5 class="title"><a href="https://remontka.com/pravilnyj-sposob-otklyucheniya-ipv6/" title="Permalink to: Правильный способ отключения IPv6"> Правильный способ отключения IPv6</a></h5><div class="mg-blog-meta"> <a href="https://remontka.com/author/admin/"> <i class="fa fa-user-circle-o"></i> admin</a></div></div></div><div class="small-post media col-md-6 col-sm-6 col-xs-12"><div class="img-small-post back-img" style="background-image: url('');"> <a href="https://remontka.com/kak-otklyuchit-proverku-diska-chkdsk-pri-zagruzke-v-windows/" class="link-div"></a></div><div class="small-post-content media-body"><div class="mg-blog-category"> <a class="newses-categories category-color-1" href="https://remontka.com/category/windows-10/" alt="Просмотреть все записи в рубрике &laquo;Windows 10&raquo;"> Windows 10 </a><a class="newses-categories category-color-1" href="https://remontka.com/category/windows-7/" alt="Просмотреть все записи в рубрике &laquo;Windows 7&raquo;"> Windows 7 </a><a class="newses-categories category-color-1" href="https://remontka.com/category/windows-xp/" alt="Просмотреть все записи в рубрике &laquo;Windows XP&raquo;"> Windows XP </a></div><h5 class="title"><a href="https://remontka.com/kak-otklyuchit-proverku-diska-chkdsk-pri-zagruzke-v-windows/" title="Permalink to: Как отключить проверку диска (CHKDSK) при загрузке в Windows"> Как отключить проверку диска (CHKDSK) при загрузке в Windows</a></h5><div class="mg-blog-meta"> <a href="https://remontka.com/author/admin/"> <i class="fa fa-user-circle-o"></i> admin</a></div></div></div></div></div></div><aside class="col-md-3"><div id="sidebar-right" class="mg-sidebar"><div id="search-1" class="mg-widget widget_search"><form role="search" method="get" id="searchform" action="https://remontka.com/"><div class="input-group"> <input type="search" class="form-control" placeholder="Поиск" value="" name="s" /> <span class="input-group-btn btn-default"> <button type="submit" class="btn"> <i class="fa fa-search"></i> </button> </span></div></form></div><div id="categories-2" class="mg-widget widget_categories"><div class="mg-wid-title"><h6><span class="bg">Рубрики</span></h6></div><form action="https://remontka.com" method="get"><label class="screen-reader-text" for="cat">Рубрики</label><select  name='cat' id='cat' class='postform'><option value='-1'>Выберите рубрику</option><option class="level-0" value="861">Active Directory</option><option class="level-0" value="188">Aliexpress</option><option class="level-0" value="186">Android</option><option class="level-0" value="207">Arduino</option><option class="level-0" value="649">autocad</option><option class="level-0" value="209">AVR</option><option class="level-0" value="883">AWS</option><option class="level-0" value="868">Azure</option><option class="level-0" value="727">C/C++</option><option class="level-0" value="872">CentOS</option><option class="level-0" value="892">Cisco</option><option class="level-0" value="226">CMS</option><option class="level-0" value="229">CMS &#8212; Разное</option><option class="level-0" value="682">computer</option><option class="level-0" value="863">Debian</option><option class="level-0" value="708">Debian Bullseye</option><option class="level-0" value="700">Debian Buster</option><option class="level-0" value="709">Debian Jessie</option><option class="level-0" value="703">Debian Lenny</option><option class="level-0" value="701">Debian news</option><option class="level-0" value="705">Debian Squeeze</option><option class="level-0" value="706">Debian Stretch</option><option class="level-0" value="707">Debian Wheezy</option><option class="level-0" value="880">DevOps</option><option class="level-0" value="702">devops Linux</option><option class="level-0" value="901">DHCP</option><option class="level-0" value="884">DNS</option><option class="level-0" value="881">Docker</option><option class="level-0" value="793">EaxCast</option><option class="level-0" value="762">Erlang</option><option class="level-0" value="689">excel</option><option class="level-0" value="870">Exchange</option><option class="level-0" value="757">FreeBSD</option><option class="level-0" value="742">Go</option><option class="level-0" value="805">GUI</option><option class="level-0" value="687">hi-tech</option><option class="level-0" value="886">HP</option><option class="level-0" value="862">Hyper-V</option><option class="level-0" value="22">iOS и MacOS</option><option class="level-0" value="799">Java</option><option class="level-0" value="832">JavaScript</option><option class="level-0" value="227">Joomla</option><option class="level-0" value="878">Kali</option><option class="level-0" value="875">Kubernetes</option><option class="level-0" value="889">KVM</option><option class="level-0" value="224">linux</option><option class="level-0" value="885">macOS</option><option class="level-0" value="683">main</option><option class="level-0" value="787">match</option><option class="level-0" value="865">Microsoft 365</option><option class="level-0" value="897">Microsoft Patch Day</option><option class="level-0" value="684">mobile-phones</option><option class="level-0" value="688">obuchajushhie-materialy</option><option class="level-0" value="853">Office</option><option class="level-0" value="867">Office 365</option><option class="level-0" value="783">OpenGL</option><option class="level-0" value="869">Outlook</option><option class="level-0" value="753">padМеLinux</option><option class="level-0" value="779">Perl</option><option class="level-0" value="847">Perl интерпретирует скаляры</option><option class="level-0" value="714">PostgreSQL</option><option class="level-0" value="855">PowerShell</option><option class="level-0" value="858">Proxmox</option><option class="level-0" value="711">Python</option><option class="level-0" value="719">SDR</option><option class="level-0" value="230">SEO</option><option class="level-0" value="704">Server Linux</option><option class="level-0" value="866">SharePoint</option><option class="level-0" value="686">short-answers</option><option class="level-0" value="145">Software</option><option class="level-0" value="874">SQL Server</option><option class="level-0" value="717">STM32</option><option class="level-0" value="732">STM33</option><option class="level-0" value="888">System Center Configuration Manager</option><option class="level-0" value="873">Teams</option><option class="level-0" value="864">Ubuntu</option><option class="level-0" value="234">USB Flash Drive</option><option class="level-0" value="879">VirtualBox</option><option class="level-0" value="895">Vista</option><option class="level-0" value="859">VMware</option><option class="level-0" value="225">Web-development</option><option class="level-0" value="23">Windows</option><option class="level-0" value="851">Windows 10</option><option class="level-0" value="852">Windows 11</option><option class="level-0" value="902">Windows 2008 Server Core</option><option class="level-0" value="876">Windows 7</option><option class="level-0" value="887">Windows 8</option><option class="level-0" value="900">Windows Server 2003</option><option class="level-0" value="890">Windows Server 2008</option><option class="level-0" value="898">Windows Server 2012</option><option class="level-0" value="877">Windows Server 2012 R2</option><option class="level-0" value="871">Windows Server 2016</option><option class="level-0" value="856">Windows Server 2019</option><option class="level-0" value="857">Windows Server 2022</option><option class="level-0" value="893">Windows XP</option><option class="level-0" value="894">WindowsServer 2003/2008</option><option class="level-0" value="685">word</option><option class="level-0" value="228">WordPress</option><option class="level-0" value="620">Автономное электроснабжение</option><option class="level-0" value="633">Автоэлектрика</option><option class="level-0" value="124">Администрирование</option><option class="level-0" value="791">Алгоритмы</option><option class="level-0" value="715">Антенны</option><option class="level-0" value="154">Архивный контент</option><option class="level-0" value="722">Ассемблер</option><option class="level-0" value="239">Базы данных</option><option class="level-0" value="1">Без рубрики</option><option class="level-0" value="24">Безопасность</option><option class="level-0" value="693">Безопасность ПК</option><option class="level-0" value="720">Беспроводная связь</option><option class="level-0" value="647">Браузеры</option><option class="level-0" value="192">Будни сисадмина</option><option class="level-0" value="725">бывает так</option><option class="level-0" value="589">В помощь начинающим электрикам</option><option class="level-0" value="126">Верстка (HTML, CSS)</option><option class="level-0" value="721">Винтаж</option><option class="level-0" value="777">Виртуализация</option><option class="level-0" value="854">Вопросы и ответы</option><option class="level-0" value="25">Восстановление данных</option><option class="level-0" value="631">Все про автоматы и УЗО</option><option class="level-0" value="615">Все про светодиоды</option><option class="level-0" value="803">Всячина</option><option class="level-0" value="603">Выбор и установка розеток и выключателей</option><option class="level-0" value="860">Групповые политики</option><option class="level-0" value="712">Девайсы</option><option class="level-0" value="578">Делимся опытом</option><option class="level-0" value="773">Десять мнений</option><option class="level-0" value="132">Дизайн и графика</option><option class="level-0" value="906">Дистрибутивы</option><option class="level-0" value="26">Для начинающих</option><option class="level-0" value="39">Другое</option><option class="level-0" value="646">Железо</option><option class="level-0" value="811">Жизнь</option><option class="level-0" value="769">Закладки</option><option class="level-0" value="134">Заметки и статьи</option><option class="level-0" value="694">Здоровье и компьютер</option><option class="level-0" value="713">Игры</option><option class="level-0" value="294">Измерительные приборы</option><option class="level-0" value="909">Инструкции</option><option class="level-0" value="203">Инструменты и приборы</option><option class="level-0" value="582">Интересные факты</option><option class="level-0" value="600">Интересные электротехнические новинки</option><option class="level-0" value="27">Интернет</option><option class="level-0" value="231">Интернет Куки &#8212; cookie</option><option class="level-0" value="244">Информация о технологиях</option><option class="level-0" value="830">Искусственный интеллект</option><option class="level-0" value="205">КМБ</option><option class="level-0" value="609">Книги и видеокурсы по электротехнике и электронике</option><option class="level-0" value="692">Компьютерные программы</option><option class="level-0" value="235">Компьютерные сети</option><option class="level-0" value="233">Компьютеры</option><option class="level-0" value="637">Криптовалюта</option><option class="level-0" value="751">Криптография</option><option class="level-0" value="828">Кроссплатформенность</option><option class="level-0" value="28">Лечение вирусов</option><option class="level-0" value="716">Литература</option><option class="level-0" value="740">Любительское радио</option><option class="level-0" value="148">Майнинг</option><option class="level-0" value="167">Майнинг архив: Airdrop и Краны</option><option class="level-0" value="165">Майнинг архив: ICO</option><option class="level-0" value="153">Майнинг архив: Железо</option><option class="level-0" value="163">Майнинг архив: Криптовалюта</option><option class="level-0" value="166">Майнинг архив: Новости криптовалют</option><option class="level-0" value="164">Майнинг архив: Общие вопросы</option><option class="level-0" value="162">Майнинг архив: Софт</option><option class="level-0" value="718">МеSDR</option><option class="level-0" value="638">Менеджмент и упраление</option><option class="level-0" value="648">Мобильные ОС</option><option class="level-0" value="29">Мобильные устройства</option><option class="level-0" value="211">Мысли вслух</option><option class="level-0" value="30">Настройка роутера</option><option class="level-0" value="636">Научные статьи</option><option class="level-0" value="31">Новости</option><option class="level-0" value="245">Новости IT технологий</option><option class="level-0" value="32">Ноутбуки</option><option class="level-0" value="236">Обзор оборудования</option><option class="level-0" value="904">Обзоры</option><option class="level-0" value="781">Облака</option><option class="level-0" value="903">Обновления</option><option class="level-0" value="905">Оборудование</option><option class="level-0" value="644">Операционные системы</option><option class="level-0" value="815">Оптимизация</option><option class="level-0" value="639">Оптимизация сайтов</option><option class="level-0" value="691">Осваиваем компьютер</option><option class="level-0" value="590">Освещение дома</option><option class="level-0" value="839">Параллелизм и многопоточность</option><option class="level-0" value="696">Персональный компьютер</option><option class="level-0" value="628">Полезная информация по электромонтажу</option><option class="level-0" value="913">полезно запустить плейбук</option><option class="level-0" value="586">Практическая электроника</option><option class="level-0" value="917">Проблема-решение</option><option class="level-0" value="238">Программирование</option><option class="level-0" value="136">Программирование</option><option class="level-0" value="627">Программируемые логические контроллеры</option><option class="level-0" value="213">Программки</option><option class="level-0" value="33">Программы</option><option class="level-0" value="240">Программы</option><option class="level-0" value="918">Програмы</option><option class="level-0" value="138">Продвижение сайтов</option><option class="level-0" value="635">Промышленное электрооборудование</option><option class="level-0" value="843">Протоколы</option><option class="level-0" value="807">Работа</option><option class="level-0" value="690">Работаем в Интернет</option><option class="level-0" value="190">радиоэлектроника</option><option class="level-0" value="34">Разное</option><option class="level-0" value="242">Разное (Software)</option><option class="level-0" value="695">Разное про ИТ</option><option class="level-0" value="738">Разработка</option><option class="level-0" value="759">Распределенные системы</option><option class="level-0" value="232">Регистрация в сервисах</option><option class="level-0" value="891">Резервное копирование</option><option class="level-0" value="624">Ремонт бытовой техники</option><option class="level-0" value="35">Ремонт компьютеров</option><option class="level-0" value="215">Ремонтируем домашние компьютеры</option><option class="level-0" value="217">Ремонты по мелочи</option><option class="level-0" value="745">Сайтостроение</option><option class="level-0" value="588">Секреты электрика</option><option class="level-0" value="907">Серверы</option><option class="level-0" value="36">Система</option><option class="level-0" value="140">Системы управления</option><option class="level-0" value="896">Скрипты</option><option class="level-0" value="640">Смартфоны</option><option class="level-0" value="908">Советы</option><option class="level-0" value="641">Софт</option><option class="level-0" value="645">Социальные сети и мессенджеры</option><option class="level-0" value="580">Спорные вопросы</option><option class="level-0" value="37">Статьи</option><option class="level-0" value="219">статьи по электронике</option><option class="level-0" value="775">СУБД</option><option class="level-0" value="221">Схемы для начинающих</option><option class="level-0" value="632">Схемы на микроконтроллерах</option><option class="level-0" value="919">Терминология</option><option class="level-0" value="241">Тестирование программного обеспечения</option><option class="level-0" value="634">Техника безопасности</option><option class="level-0" value="243">Технологии</option><option class="level-0" value="899">Трюки</option><option class="level-0" value="710">умный дом с Linux</option><option class="level-0" value="581">Устройства автоматики</option><option class="level-0" value="882">Утилиты</option><option class="level-0" value="38">Файлы</option><option class="level-0" value="797">Философия</option><option class="level-0" value="642">Финансы</option><option class="level-0" value="765">Функциональное программирование</option><option class="level-0" value="237">Шифрование</option><option class="level-0" value="912">Шпаргалки</option><option class="level-0" value="576">Электрическая энергия в быту и на производстве</option><option class="level-0" value="584">Электрические приборы и устройства</option><option class="level-0" value="602">Электрическое подключение оборудования</option><option class="level-0" value="579">Электричество в доме</option><option class="level-0" value="616">Электродвигатели и их применение</option><option class="level-0" value="643">Электроника</option><option class="level-0" value="593">Электрообзоры</option><option class="level-0" value="608">Энергосбережение, экономия энергии</option><option class="level-0" value="606">Юмор электрика</option><option class="level-0" value="771">Языки программирования</option> </select></form><script type="text/javascript">(function() {
-	var dropdown = document.getElementById( "cat" );
-	function onCatChange() {
-		if ( dropdown.options[ dropdown.selectedIndex ].value > 0 ) {
-			dropdown.parentNode.submit();
-		}
-	}
-	dropdown.onchange = onCatChange;
-})();</script> </div><div id="recent-posts-3" class="mg-widget widget_recent_entries"><div class="mg-wid-title"><h6><span class="bg">Свежие записи</span></h6></div><ul><li> <a href="https://remontka.com/terminus-zulip/">Что такое Zulip</a></li><li> <a href="https://remontka.com/terminus-zookeeper/">Что такое Zookeeper</a></li><li> <a href="https://remontka.com/terminus-zimbra/">Что такое Zimbra</a></li><li> <a href="https://remontka.com/terminus-zabbix/">Что такое Zabbix</a></li><li> <a href="https://remontka.com/terminus-youtube/">Что такое YouTube</a></li></ul></div></div></aside></div></div></main><footer><div class="overlay" style="background-color: ;"><div class="mg-footer-widget-area"><div class="container"><div class="row"></div></div></div><div class="mg-footer-bottom-area"><div class="container"><div class="divide-line"></div><div class="row align-items-center"><div class="col-md-6"><div class="site-branding-text"><h1 class="site-title"> <a href="https://remontka.com/" rel="home">РЕМОНТКА</a></h1><p class="site-description"></p></div></div></div></div></div><div class="mg-footer-copyright"><div class="container"><div class="row"><div class="col-md-6 text-xs"><p> <a href="https://Remontka.com/"> © 2024 </a> <span class="sep"> | </span> Remontka.com - ремонт компьютеров, ноутбуков, смартфонов и другие материалы IT тематики</p></div><div class="col-md-6 text-right text-xs"><ul id="menu-foot" class="info-right"><li id="menu-item-28573" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-28573"><a class="nav-link" title="Контакты" href="https://remontka.com/contact/">Контакты</a></li><li id="menu-item-28579" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28579"><a class="nav-link" title="Ремонт компьютеров" href="https://remontka.com/category/compyuterov/">Ремонт компьютеров</a></li><li id="menu-item-28576" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28576"><a class="nav-link" title="Верстка (HTML, CSS)" href="https://remontka.com/category/verstka-html-css/">Верстка (HTML, CSS)</a></li><li id="menu-item-28577" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28577"><a class="nav-link" title="Программирование" href="https://remontka.com/category/programmirovanie/">Программирование</a></li></ul></div></div></div></div></div></footer></div> <a href="#" class="ta_upscr bounceInup animated"><i class="fa fa-angle-up"></i></a>  <script type="speculationrules">{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/newses\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}</script> <div style="position:absolute;top:10px;right:8%;z-index:999999;" id="gtranslate_wrapper"> <a href="#" onclick="doGTranslate('ru|en');return false;" title="English" class="glink nturl notranslate"><img src="//remontka.com/wp-content/plugins/gtranslate/flags/32/en-us.png" height="32" width="32" alt="English" /></a><a href="#" onclick="doGTranslate('ru|ru');return false;" title="Russian" class="glink nturl notranslate"><img src="//remontka.com/wp-content/plugins/gtranslate/flags/32/ru.png" height="32" width="32" alt="Russian" /></a><a href="#" onclick="doGTranslate('ru|uk');return false;" title="Ukrainian" class="glink nturl notranslate"><img src="//remontka.com/wp-content/plugins/gtranslate/flags/32/uk.png" height="32" width="32" alt="Ukrainian" /></a><style>#goog-gt-tt{display:none!important;}.goog-te-banner-frame{display:none!important;}.goog-te-menu-value:hover{text-decoration:none!important;}.goog-text-highlight{background-color:transparent!important;box-shadow:none!important;}body{top:0!important;}#google_translate_element2{display:none!important;}</style><div id="google_translate_element2"></div> <script>function googleTranslateElementInit2() {new google.translate.TranslateElement({pageLanguage: 'ru',autoDisplay: false}, 'google_translate_element2');}if(!window.gt_translate_script){window.gt_translate_script=document.createElement('script');gt_translate_script.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2';document.body.appendChild(gt_translate_script);}</script> <script>function GTranslateGetCurrentLang() {var keyValue = document['cookie'].match('(^|;) ?googtrans=([^;]*)(;|$)');return keyValue ? keyValue[2].split('/')[2] : null;}
-function GTranslateFireEvent(element,event){try{if(document.createEventObject){var evt=document.createEventObject();element.fireEvent('on'+event,evt)}else{var evt=document.createEvent('HTMLEvents');evt.initEvent(event,true,true);element.dispatchEvent(evt)}}catch(e){}}
-function doGTranslate(lang_pair){if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];if(GTranslateGetCurrentLang() == null && lang == lang_pair.split('|')[0])return;if(typeof ga=='function'){ga('send', 'event', 'GTranslate', lang, location.hostname+location.pathname+location.search);}var teCombo;var sel=document.getElementsByTagName('select');for(var i=0;i<sel.length;i++)if(sel[i].className.indexOf('goog-te-combo')!=-1){teCombo=sel[i];break;}if(document.getElementById('google_translate_element2')==null||document.getElementById('google_translate_element2').innerHTML.length==0||teCombo.length==0||teCombo.innerHTML.length==0){setTimeout(function(){doGTranslate(lang_pair)},500)}else{teCombo.value=lang;GTranslateFireEvent(teCombo,'change');GTranslateFireEvent(teCombo,'change')}}</script> </div><style>footer .mg-widget p, footer .site-title a, footer .site-title a:hover , footer .site-description, footer .site-description:hover{
+      
+
+       
+        <hr><div class="k-label">Добавлен:</div>  <span class="status7">5 сезон 16 серия</span>
+       
+       
+
+      
+
+      
+
+      
+
+      
+      <hr />
+      <div class="k-label">Режиссер:</div>
+      Мишель МакЛарен, Адам Бернштейн, Винс Гиллиган
+      
+
+      
+      <hr />
+      <div class="k-label">Актеры:</div>
+      Брайан Крэнстон, Анна Ганн, Аарон Пол, Дин Норрис, Бетси Брандт, АрДжей Митти, Боб Оденкёрк, Джанкарло Эспозито, Джонатан Бэнкс, Стивен Майкл Кесада
+      
+    </div>
+  </div>
+  <div class="kino-h-sub2">
+    <div class="full_descr_title">Описание фильма</div>
+    <p>Уолтер Уайт — среднестатистический житель небольшого городка Альбукерке, в свои 50 лет преподающий химию в одной из местных школ. Заработной платы учителя ему катастрофически не хватает, поэтому его второй работой считается автомойка. Заработанные средства он тратит на содержание своей беременной супруги и пока еще единственного сына-инвалида.</p>
+<p>Вскоре привычный жизненный уклад нашего героя трещит по швам, у мужчины подтверждается страшный диагноз - рак легких в неоперабельной стадии. Оглушенный такой новостью, мистер Уайт решает оставить после себя столько денег, сколько понадобиться для обеспечения финансового будущего его семье. А как можно заработать быстро большие деньги? Конечно, незаконным путем - изготовлением и сбытом метамфетамина. В напарники наш герой берет своего бывшего ученик — Джесси Пинкман. Совместными усилиями у них получается найти отдаленный передвижной домик и отправится в пустыню, подальше от любопытных глаз и стражей правопорядка для изготовления запрещенного вещества.</p>
+    Смотрите Во все тяжкие 1-5 сезон онлайн 2008 года в
+    хорошем качестве HD 720p
+    и FullHD 1080p у нас
+    совершенно бесплатно на русском языке. Просмотр возможен на смартфонах:
+    Apple iOS iPhone Samsung,
+    планшете iPad, на любых устройствах под управлением Android, а так же на
+    телевизорах Smart TV.
+  </div>
+</div>
+
+<div style="margin-top: -35px"></div>
+
+<div class="reklama" style="text-align: center;margin: 15px 0 0;"><ins class="0dd30d14" data-key="777ee6a401f5d7a9481a02d2f505145f"></ins><ins class="7236739a" data-key="50ed2ef0a8b1e4cc089a27f100614241"></ins></div> 
+
+
+<div class="kino-h-sub">
+<h2>Смотреть Во все тяжкие 1-5 сезон  онлайн</h2>
+
+
+</div>
+
+<div class="player-section">
+  <ul class="tabs nowrap">
+    <li class="current">Плеер</li>
+    <li>Плеер 2</li>
+    
+  </ul>
+
+  <!--noindex-->
+  <div class="k-rate-full">
+
+    <div class="frate ignore-select" id="frate-1182">
+      <div class="rate-plus" id="pluss-1182" onclick="doRateLD('plus', '1182');"><span
+          class="fa fa-thumbs-up"></span><span class="rcount"><span data-likes-id="1182">5110</span></span></div>
+      <div class="rate-minus" id="minuss-1182"
+        onclick="doRateLD('minus', '1182');"><span class="fa fa-thumbs-down"></span><span
+          class="rcount"><span data-dislikes-id="1182">571</span></span></div>
+      <div class="rate-data"><span data-ratig-layer-id="1182"><span class="ratingtypeplusminus ratingplus" >+4539</span></span><span data-vote-num-id="1182">5681</span></div>
+
+    </div>
+
+  </div>
+
+  <div class="podel">
+    <div class="uSocial-Share" data-pid="d914439afe22a1890ac25a03067d39f4" data-type="share" data-options="round-rect,style4,default,absolute,horizontal,size24,eachCounter0,counter0,nomobile,mobile_position_right" data-social="vk,fb,ok,vi,telegram"></div>
+  </div>
+
+  <div class="player-box visible full-text">
+    <iframe src="//api.namy.ws/embed/kp/404900?host=kinogoo.fm" allow="autoplay *" width="639" height="400" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen=""></iframe>
+  </div>
+    
+    
+    
+        <div class="player-box  full-text">
+    <iframe src="https://Ambrasura-as.stloadi.live/?token_movie=715bf2a56b690e0bfbe8fb6051f349&token=9fd297e16a44f35a4dfdabacb309fb" allow="autoplay *" width="639" height="400" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" oallowfullscreen="" msallowfullscreen=""></iframe>
+  </div>
+
+  
+
+  <!--/noindex-->
+  <div class="visible full-text"></div>
+ 
+  <div class="reklama" style="text-align: center;margin: 15px 0 0;"><ins class="0dd30d14" data-key="777ee6a401f5d7a9481a02d2f505145f"></ins><ins class="7236739a" data-key="50ed2ef0a8b1e4cc089a27f100614241"></ins></div> 
+
+</div>
+
+
+<div class="kino-related">
+  <div class="kino-h">Рекомендуем фильм:</div>
+  <div class="k-rel-box clearfix">
+    <div id="owl-rel">
+      <a class="rel-kino" href="https://kinogoo.fm/915-tetja-marta-1-2-sezon.html">
+  <div class="rel-kino-img img-box">
+  <img src="/uploads/posts/2023-12/1051-tetja-marta.jpg" width="100%" height="100%" alt="Тётя Марта 1-2 сезон" title="Тётя Марта 1-2 сезон" />
+  
+  </div>
+  <div class="rel-kino-title">Тётя Марта 1-2 сезон</div>
+</a><a class="rel-kino" href="https://kinogoo.fm/1465-ostrye-kozyrki-1-6-sezon-hd.html">
+  <div class="rel-kino-img img-box">
+  <img src="/uploads/posts/2023-12/430-ostrye-kozyrki-1-6-sezon.jpg" width="100%" height="100%" alt="Острые козырьки 1-6 сезон" title="Острые козырьки 1-6 сезон" />
+  
+  </div>
+  <div class="rel-kino-title">Острые козырьки 1-6 сезон</div>
+</a><a class="rel-kino" href="https://kinogoo.fm/1939-semejka-1-2-sezon.html">
+  <div class="rel-kino-img img-box">
+  <img src="/uploads/posts/2024-02/2011-semejka-1-2-sezon.jpg" width="100%" height="100%" alt="Семейка 1-2 сезон" title="Семейка 1-2 сезон" />
+  
+  </div>
+  <div class="rel-kino-title">Семейка 1-2 сезон</div>
+</a><a class="rel-kino" href="https://kinogoo.fm/136-pila-10.html">
+  <div class="rel-kino-img img-box">
+  <img src="/uploads/posts/2023-12/1718-pila-10.jpg" width="100%" height="100%" alt="Пила 10" title="Пила 10" />
+  
+  </div>
+  <div class="rel-kino-title">Пила 10</div>
+</a><a class="rel-kino" href="https://kinogoo.fm/59-leo.html">
+  <div class="rel-kino-img img-box">
+  <img src="/uploads/posts/2023-12/1880-leo.jpg" width="100%" height="100%" alt="Лео" title="Лео" />
+  
+  </div>
+  <div class="rel-kino-title">Лео</div>
+</a>
+    </div>
+  </div>
+</div>
+
+
+<div style="margin-top: -35px"></div>
+<div class="full-comms ignore-select">
+  <!--noindex--><form  method="post" name="dle-comments-form" id="dle-comments-form" ><div id="addcform">
+	<div class="add-com-form clearfix">
+		<div class="add-com-textarea clearfix">
+			<div class="add-comm active">
+				
+				<div class="ac-inputs clearfix">
+					<input type="text" maxlength="35" name="name" id="name"
+						placeholder="Ваше имя" />
+				</div>
+				
+				<div class="ac-textarea">
+					<div class="bb-editor">
+						<div class="bb-editor">
+<textarea name="comments" id="comments" cols="70" rows="10"></textarea>
+</div>
+					</div>
+				</div>
+
+				
+				
+				
 	
-			color: #ffffff !important;
-}</style> <script type="text/javascript" src="https://remontka.com/wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0" id="wp-polyfill-js"></script> <script type="text/javascript" id="contact-form-7-js-extra">var wpcf7 = {"api":{"root":"https:\/\/remontka.com\/wp-json\/","namespace":"contact-form-7\/v1"},"cached":"1"};</script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_862c82d8373e4d69aa5af6c994389bda.js?ver=5.5.2" id="contact-form-7-js"></script> <script type="text/javascript" src="https://remontka.com/wp-content/cache/wmac/js/wmac_single_5bc93ca24387b20d33c4b9afe2f154ff.js?ver=1744742001" id="newses-custom-js"></script> <script>/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);</script> <script>jQuery('a,input').bind('focus', function() {
-    if(!jQuery(this).closest(".menu-item").length && ( jQuery(window).width() <= 992) ) {
-    jQuery('.navbar-collapse').removeClass('show');
-}})</script>  <script type="text/javascript" >(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+                
 
-   ym(86261620, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true
-   });</script> <noscript><div><img src="https://mc.yandex.ru/watch/86261620" style="position:absolute; left:-9999px;" alt="" /></div></noscript></body></html>
+				<div class="ac-submit"><button name="submit" class="fbutton" type="submit">Отправить</button></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<input type="hidden" name="subaction" value="addcomment">
+		<input type="hidden" name="post_id" id="post_id" value="1182"><input type="hidden" name="user_hash" value="100a6d56e8c024c11da87c2f93e6b48192111989"></form><!--/noindex-->
+  
+  <div class="comments-items">
+    <form method="post" name="dlemasscomments" id="dlemasscomments"><div id="dle-comments-list">
+
+<div id="dle-ajax-comments"></div>
+<div id="comment"></div><ol class="comments-tree-list"><li id="comments-tree-item-6809" class="comments-tree-item" ><div id='comment-id-6809'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Walter White">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Walter White</div>
+        <div class="comm-date">В пятницу в 21:23</div>
+          <div class="comm-rate ">
+			<a href="#" onclick="doCommentsRate('plus', '6809'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6809"><span class="ratingtypeplusminus ratingzero" >0</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6809'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6809'>Ребят а настоящий Уайт, кто-то хочет новый рецепт заценить?</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6809', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Walter&nbsp;White', '1764354233', 'В пятницу в 21:23, Walter&nbsp;White написал:'); return false;" onclick="dle_ins('6809'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6809', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6801" class="comments-tree-item" ><div id='comment-id-6801'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Жоскэ Туко">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Жоскэ Туко</div>
+        <div class="comm-date">В четверг в 08:17</div>
+          <div class="comm-rate ">
+			<a href="#" onclick="doCommentsRate('plus', '6801'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6801"><span class="ratingtypeplusminus ratingzero" >0</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6801'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6801'>Прикольный сериал воу йоу мабой<br>Ща на 4 сезоне и 5 серии</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6801', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Жоскэ&nbsp;Туко', '1764220634', 'В четверг в 08:17, Жоскэ&nbsp;Туко написал:'); return false;" onclick="dle_ins('6801'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6801', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6782" class="comments-tree-item" ><div id='comment-id-6782'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Джардред">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Джардред</div>
+        <div class="comm-date">24 ноября 2025 00:08</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6782'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6782"><span class="ratingtypeplusminus ratingminus" >-4</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6782'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6782'>Сикс сэвенбратья</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6782', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Джардред', '1763932113', '24 ноября 2025 00:08, Джардред написал:'); return false;" onclick="dle_ins('6782'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6782', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6779" class="comments-tree-item" ><div id='comment-id-6779'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Повар">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Повар</div>
+        <div class="comm-date">23 ноября 2025 14:25</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6779'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6779"><span class="ratingtypeplusminus ratingplus" >+7</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6779'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6779'>Если на первом сезоне вы предполагаете что Уолтер Уайт гений, дождитесь 5 сезона. <br>Там вы подтвердите свои догадки</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6779', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Повар', '1763897119', '23 ноября 2025 14:25, Повар написал:'); return false;" onclick="dle_ins('6779'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6779', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6723" class="comments-tree-item" ><div id='comment-id-6723'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="мяукатьдосмерти">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">мяукатьдосмерти</div>
+        <div class="comm-date">17 ноября 2025 20:41</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6723'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6723"><span class="ratingtypeplusminus ratingplus" >+10</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6723'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6723'><!--QuoteBegin мяукатьдосмерти --><div class="title_quote">Цитата: мяукатьдосмерти</div><div class="quote"><!--QuoteEBegin-->пов: када жессе сказал что то умное но ты шлешь его нахуй потомушта это жессе и вообще он тупой казал<br><br>цитата Уолтера Уайта<!--QuoteEnd--></div><!--QuoteEEnd--></div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6723', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('мяукатьдосмерти', '1763401262', '17 ноября 2025 20:41, мяукатьдосмерти написал:'); return false;" onclick="dle_ins('6723'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6723', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6722" class="comments-tree-item" ><div id='comment-id-6722'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="мяукатьдосмерти">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">мяукатьдосмерти</div>
+        <div class="comm-date">17 ноября 2025 20:39</div>
+          <div class="comm-rate ">
+			<a href="#" onclick="doCommentsRate('plus', '6722'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6722"><span class="ratingtypeplusminus ratingzero" >0</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6722'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6722'>пов: када жессе сказал что то умное но ты шлешь его нахуй потомушта это жессе и вообще он тупой казал<br><br>цитата Уолтера Уайта</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6722', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('мяукатьдосмерти', '1763401177', '17 ноября 2025 20:39, мяукатьдосмерти написал:'); return false;" onclick="dle_ins('6722'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6722', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6721" class="comments-tree-item" ><div id='comment-id-6721'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="жессе">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">жессе</div>
+        <div class="comm-date">17 ноября 2025 20:36</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6721'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6721"><span class="ratingtypeplusminus ratingplus" >+2</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6721'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6721'>мистер вайт а вы не прихуели</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6721', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('жессе', '1763400982', '17 ноября 2025 20:36, жессе написал:'); return false;" onclick="dle_ins('6721'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6721', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6706" class="comments-tree-item" ><div id='comment-id-6706'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Олег Мефедроний">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Олег Мефедроний</div>
+        <div class="comm-date">16 ноября 2025 17:01</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6706'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6706"><span class="ratingtypeplusminus ratingplus" >+8</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6706'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6706'>ахуенный сериал</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6706', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Олег&nbsp;Мефедроний', '1763301682', '16 ноября 2025 17:01, Олег&nbsp;Мефедроний написал:'); return false;" onclick="dle_ins('6706'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6706', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6676" class="comments-tree-item" ><div id='comment-id-6676'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Для Бибрик">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Для Бибрик</div>
+        <div class="comm-date">13 ноября 2025 03:06</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6676'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6676"><span class="ratingtypeplusminus ratingplus" >+9</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6676'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6676'>Джейн пошла на шантаж. Она посадила Джейси на героин. А это дорожка к быстрой деградации. Джейси тогда конец. Поэтому случайный конец Джейн был выгоден. Не жалей тут никого - преступные деньги всегда ЗЛО. Всегда.</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6676', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Для&nbsp;Бибрик', '1762992372', '13 ноября 2025 03:06, Для&nbsp;Бибрик написал:'); return false;" onclick="dle_ins('6676'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6676', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6674" class="comments-tree-item" ><div id='comment-id-6674'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Бибрик">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Бибрик</div>
+        <div class="comm-date">12 ноября 2025 22:34</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6674'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6674"><span class="ratingtypeplusminus ratingminus" >-2</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6674'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6674'>Я ненавижу Уолта за то что он не помог Джейн и мне жалко Джесси Скайлер вообще мразь я не могу... Кстати у Мари даже ЧАЙНИК ФИОЛЕТОВЫЙ</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6674', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Бибрик', '1762976041', '12 ноября 2025 22:34, Бибрик написал:'); return false;" onclick="dle_ins('6674'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6674', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6645" class="comments-tree-item" ><div id='comment-id-6645'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Тук">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Тук</div>
+        <div class="comm-date">9 ноября 2025 18:15</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6645'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6645"><span class="ratingtypeplusminus ratingplus" >+9</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6645'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6645'>Отличный сериал</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6645', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Тук', '1762701318', '9 ноября 2025 18:15, Тук написал:'); return false;" onclick="dle_ins('6645'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6645', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6628" class="comments-tree-item" ><div id='comment-id-6628'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="джесси">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">джесси</div>
+        <div class="comm-date">8 ноября 2025 01:40</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6628'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6628"><span class="ratingtypeplusminus ratingplus" >+5</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6628'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6628'>я тупе створиня</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6628', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('джесси', '1762555234', '8 ноября 2025 01:40, джесси написал:'); return false;" onclick="dle_ins('6628'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6628', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6627" class="comments-tree-item" ><div id='comment-id-6627'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="джесси">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">джесси</div>
+        <div class="comm-date">8 ноября 2025 01:22</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6627'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6627"><span class="ratingtypeplusminus ratingplus" >+7</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6627'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6627'>я люблю альтушек</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6627', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('джесси', '1762554156', '8 ноября 2025 01:22, джесси написал:'); return false;" onclick="dle_ins('6627'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6627', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6626" class="comments-tree-item" ><div id='comment-id-6626'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="скайлер">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">скайлер</div>
+        <div class="comm-date">8 ноября 2025 01:21</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6626'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6626"><span class="ratingtypeplusminus ratingplus" >+9</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6626'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6626'>привет муж дай мне тож мет на кончике ножа</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6626', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('скайлер', '1762554068', '8 ноября 2025 01:21, скайлер написал:'); return false;" onclick="dle_ins('6626'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6626', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6625" class="comments-tree-item" ><div id='comment-id-6625'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Папа твой">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Папа твой</div>
+        <div class="comm-date">8 ноября 2025 01:20</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6625'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6625"><span class="ratingtypeplusminus ratingminus" >-7</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6625'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6625'>Ты афигел чи шо</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6625', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Папа&nbsp;твой', '1762554034', '8 ноября 2025 01:20, Папа&nbsp;твой написал:'); return false;" onclick="dle_ins('6625'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6625', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6574" class="comments-tree-item" ><div id='comment-id-6574'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="орсений">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">орсений</div>
+        <div class="comm-date">3 ноября 2025 00:08</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6574'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6574"><span class="ratingtypeplusminus ratingplus" >+10</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6574'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6574'>йоу мисте вайт довай бадяжить самогон</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6574', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('орсений', '1762117729', '3 ноября 2025 00:08, орсений написал:'); return false;" onclick="dle_ins('6574'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6574', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6559" class="comments-tree-item" ><div id='comment-id-6559'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="правда">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">правда</div>
+        <div class="comm-date">2 ноября 2025 08:17</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6559'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6559"><span class="ratingtypeplusminus ratingminus" >-5</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6559'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6559'>! тут вам не здесь !</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6559', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('правда', '1762060638', '2 ноября 2025 08:17, правда написал:'); return false;" onclick="dle_ins('6559'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6559', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6558" class="comments-tree-item" ><div id='comment-id-6558'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="злой дедушка">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">злой дедушка</div>
+        <div class="comm-date">2 ноября 2025 08:16</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6558'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6558"><span class="ratingtypeplusminus ratingplus" >+16</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6558'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6558'>Скайлер ппц какая мразь, не могу тепреть эту дрянь</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6558', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('злой&nbsp;дедушка', '1762060569', '2 ноября 2025 08:16, злой&nbsp;дедушка написал:'); return false;" onclick="dle_ins('6558'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6558', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6557" class="comments-tree-item" ><div id='comment-id-6557'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="твоя папа">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">твоя папа</div>
+        <div class="comm-date">2 ноября 2025 08:15</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6557'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6557"><span class="ratingtypeplusminus ratingminus" >-4</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6557'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6557'>твой мама муама</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6557', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('твоя&nbsp;папа', '1762060518', '2 ноября 2025 08:15, твоя&nbsp;папа написал:'); return false;" onclick="dle_ins('6557'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6557', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6540" class="comments-tree-item" ><div id='comment-id-6540'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="скайлер сучка">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">скайлер сучка</div>
+        <div class="comm-date">1 ноября 2025 10:39</div>
+          <div class="comm-rate ">
+			<a href="#" onclick="doCommentsRate('plus', '6540'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6540"><span class="ratingtypeplusminus ratingzero" >0</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6540'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6540'>Скайлер виглядит как мужик передетый в женщину, ну разве нормальную актрису немогли найти..</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6540', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('скайлер&nbsp;сучка', '1761982762', '1 ноября 2025 10:39, скайлер&nbsp;сучка написал:'); return false;" onclick="dle_ins('6540'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6540', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6528" class="comments-tree-item" ><div id='comment-id-6528'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Мари">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Мари</div>
+        <div class="comm-date">31 октября 2025 15:14</div>
+          <div class="comm-rate neg-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6528'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6528"><span class="ratingtypeplusminus ratingminus" >-27</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6528'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6528'>Скайлер топ Хенк топ а волт и джесси гавно</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6528', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Мари', '1761912862', '31 октября 2025 15:14, Мари написал:'); return false;" onclick="dle_ins('6528'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6528', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6524" class="comments-tree-item" ><div id='comment-id-6524'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Зритель">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Зритель</div>
+        <div class="comm-date">31 октября 2025 02:19</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6524'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6524"><span class="ratingtypeplusminus ratingplus" >+4</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6524'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6524'>посмотрел я сериал, и для меня он кончился очень грустно понимая что уолту не удалось закончить свою жизнь тихо и любя в округе семьи. Но сериал очень классный и затягивающий</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6524', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Зритель', '1761866355', '31 октября 2025 02:19, Зритель написал:'); return false;" onclick="dle_ins('6524'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6524', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6523" class="comments-tree-item" ><div id='comment-id-6523'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="педик">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">педик</div>
+        <div class="comm-date">31 октября 2025 00:28</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6523'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6523"><span class="ratingtypeplusminus ratingplus" >+4</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6523'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6523'>йоу мистер вайт в дверь стучят</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6523', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('педик', '1761859716', '31 октября 2025 00:28, педик написал:'); return false;" onclick="dle_ins('6523'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6523', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6514" class="comments-tree-item" ><div id='comment-id-6514'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="фак">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">фак</div>
+        <div class="comm-date">30 октября 2025 13:22</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6514'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6514"><span class="ratingtypeplusminus ratingplus" >+3</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6514'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6514'>мусара и в абукерке мусора,стукачи,шлюшки,ну пиздец</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6514', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('фак', '1761819749', '30 октября 2025 13:22, фак написал:'); return false;" onclick="dle_ins('6514'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6514', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6495" class="comments-tree-item" ><div id='comment-id-6495'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="дима">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">дима</div>
+        <div class="comm-date">28 октября 2025 08:15</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6495'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6495"><span class="ratingtypeplusminus ratingplus" >+26</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6495'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6495'>скайлер шлюха ванюая</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6495', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('дима', '1761628513', '28 октября 2025 08:15, дима написал:'); return false;" onclick="dle_ins('6495'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6495', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6493" class="comments-tree-item" ><div id='comment-id-6493'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Скайлер 300отсосов">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Скайлер 300отсосов</div>
+        <div class="comm-date">27 октября 2025 22:54</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6493'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6493"><span class="ratingtypeplusminus ratingplus" >+10</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6493'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6493'>Ие сын правду говарит что она сучка и что он ие ебет по ночам</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6493', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Скайлер&nbsp;300отсосов', '1761594863', '27 октября 2025 22:54, Скайлер&nbsp;300отсосов написал:'); return false;" onclick="dle_ins('6493'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6493', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6470" class="comments-tree-item" ><div id='comment-id-6470'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="слюнявій">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">слюнявій</div>
+        <div class="comm-date">26 октября 2025 21:30</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6470'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6470"><span class="ratingtypeplusminus ratingplus" >+6</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6470'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6470'>йо місте вайт да расслабся ти уже бротан</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6470', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('слюнявій', '1761503410', '26 октября 2025 21:30, слюнявій написал:'); return false;" onclick="dle_ins('6470'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6470', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6467" class="comments-tree-item" ><div id='comment-id-6467'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="брбэ">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">брбэ</div>
+        <div class="comm-date">26 октября 2025 17:24</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6467'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6467"><span class="ratingtypeplusminus ratingplus" >+12</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6467'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6467'>всем хай кто читает</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6467', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('брбэ', '1761488668', '26 октября 2025 17:24, брбэ написал:'); return false;" onclick="dle_ins('6467'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6467', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6450" class="comments-tree-item" ><div id='comment-id-6450'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Скайлер шлюха">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Скайлер шлюха</div>
+        <div class="comm-date">25 октября 2025 12:32</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6450'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6450"><span class="ratingtypeplusminus ratingplus" >+25</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6450'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6450'>Скайлер ебучая шлюха, без неё Уолтер был бы уже давно миллионером</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6450', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Скайлер&nbsp;шлюха', '1761384765', '25 октября 2025 12:32, Скайлер&nbsp;шлюха написал:'); return false;" onclick="dle_ins('6450'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6450', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li><li id="comments-tree-item-6421" class="comments-tree-item" ><div id='comment-id-6421'><div class="comm-item clearfix">
+  <div class="comm-left">
+    <img src="/templates/T/dleimages/noavatar.png"
+      alt="Бедон">
+  </div>
+  <div class="comm-right">
+    <div class="comm-top-info clearfix">
+      <div class="comm-info-line clearfix">
+        <div class="comm-author">Бедон</div>
+        <div class="comm-date">22 октября 2025 10:49</div>
+          <div class="comm-rate pos-comm">
+			<a href="#" onclick="doCommentsRate('plus', '6421'); return false;" >+</a>
+			<span data-comments-ratig-layer-id="6421"><span class="ratingtypeplusminus ratingplus" >+18</span></span>
+			<a href="#" onclick="doCommentsRate('minus', '6421'); return false;" >-</a>
+		  </div>
+      </div>
+    </div>
+    <div class="comm-text">
+      <div class="comm-body clearfix">
+        <div id='comm-id-6421'>Скайлер, ебаная шлюха, заебала уже, блядь, лучше бы В.В. с Венди из первых сезонов встречался и женился</div>
+      </div>
+
+    </div>
+    <div class="comm-bottom-info">
+      <ul class="clearfix">
+        <li><a onclick="dle_reply('6421', '0', '0'); return false;" href="#"><i class="fa fa-reply"></i>Ответить</a></li>
+        <li><a onmouseover="dle_copy_quote('Бедон', '1761119385', '22 октября 2025 10:49, Бедон написал:'); return false;" onclick="dle_ins('6421'); return false;" href="#"><i class="fa fa-quote-right"></i>Цитата</a></li>
+        <li><a href="javascript:AddComplaint('6421', 'comments')"><i class="fa fa-exclamation-circle"></i> Пожаловаться</a></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</div></div></li></ol>
+<div class="ajax_comments_area"><div class="ajax_loaded_comments"></div><div class="ajax_comments_next"></div></div>
+</div></form>
+
+    <!--dlenavigationcomments-->
+  </div>
+  
+</div>
+<ins class="7236739a" data-key="ce73e847d196c2b9d2b51f361f762a44"></ins>
+<ins class="0dd30d14" data-key="09fc873b9603ff33259b7ef3fda4f6a4"></ins><script>!function(){
+if(window['__actualize.js'])return;window['__actualize.js']=1;
+var actual = "https://api.initem.ws"
+	,re=/^(?:https?:)?\/\/(?:mm|app?i\w*)\.(delivembed\.cc|buildplayer\.com|embedstorage\.net|mir-dikogo-zapada\.com|multikland\.net|placehere\.link|synchroncode\.com|ameytools\.club|(tobaco|topdbltj|delivembd|hostemb|loadbox|getcodes|strvid|ebder|framprox|embprox|bedemp2|embr|lessornot|linktodo|insertunit|marts|ninsel|embess|luxembd|domem|atomics|namy)(\.ws))/
+	,delay=200,max=1000*60*60*24
+	,dry=[]
+	,ios=~navigator.userAgent.indexOf('iPhone')
+	,ral
+	,IM = ' !important;',css=document.createElement('style');
+css.innerHTML= '.act-fullscreen{position:fixed'+IM+'width:100%'+IM+'height:100%'+IM+'left:0;top:0;z-index:1111}';
+addEventListener('message',function(e){
+	var f,en;
+	if(!e.data||!(f=findFrame(function (f){return f.contentWindow==e.source})))return;
+	if(e.data.event=='externalFullScreen?'){
+		if(!css.parentNode)document.head.appendChild(css);
+		e.source.postMessage({event:'externalFullScreen!'});
+	}else if(e.data.event=='toggleFullScreen'){
+		en=f.classList.toggle('act-fullscreen');
+		e.source.postMessage({event:'fullScreen',enter:en});
+	}
+});
+if(window.fetch&&!ios) {
+	function pass(){ral = 1}
+	head('https://test.showvid.ws/ping').catch(pass);
+	if(/club$/.test(location.hostname))head('https://cdn.jsdelivr.net/npm/venom-player').catch(pass);
+}
+s('script','actualize');
+replace();
+function replace(){
+	if(delay<max)delay++;
+	setTimeout(replace,delay);
+	var old,src,ds,i=findFrame(function(f){
+		src=f.src;
+		if(!src&&(ds=f.dataset)){
+			if(ds.src){
+				old=ds.src.match(re);
+				if(old)ds.src=ds.src.replace(old[0],'https://api.'+old[1])
+			}if(/\blazyload(ed|ing)\b/.test(f.className))src=ds.src;
+		}
+		return old=src&&src.indexOf(actual)&&dry.indexOf(src)===-1&&src.match(re)
+	});
+	if (!i ||i.offsetWidth===0) return;
+	dry.push(src);
+	var url = src.replace(old[0], actual);
+	get(url, function(r){
+		if(ral===1)return;
+		var up=update(i,r);
+		dry=[];
+		if(window.URL){
+			url=new URL(url);
+			url.searchParams.delete('episode');
+		}
+		addEventListener('message',function(e){
+			if(e.origin==location.origin&&e.data=='reActualizeMe'&&up.contentWindow==e.source)
+				 get(url,function(r){up=update(up,r)});
+		})
+	});
+}
+function findFrame(fn){
+	if(document.body)return Array.prototype.find.call(document.body.getElementsByTagName('iframe'),fn);
+}
+function update(old,w){
+	var up = document.createElement('iframe'),
+		allow = 'autoplay *; fullscreen';
+	if (ios || /mac os/i.test(navigator.userAgent)) allow += ' *';
+	copyAttr(old,up);
+	up.setAttribute('allow', allow);
+	up.allow = allow;
+	old.parentElement.replaceChild(up,old);
+	up.contentDocument.write(w);
+	up.contentDocument.close();
+
+	var s=up.setAttribute;
+	up.setAttribute = function(n,v){
+		if(n=='src'&&!v) console.warn('empty src')
+		else s.call(up,n,v)
+	};
+	return up;
+}
+function copyAttr(from,to){
+	var attrs=from.attributes;
+	for(var name,i=0;i<attrs.length;i++){
+		name = attrs[i].name;
+		if(name!='src'&&name!='data-src'&&/^[\w\-]+$/.test(name))
+			to.setAttribute(name,attrs[i].value);
+	}
+}
+function s(hit, sub, e) {
+	new Image().src = "https://s.myangular.life/player?cat=actual&hit=" + hit +
+		"&sub=" + sub + (e || '') +
+		"&host=" + location.hostname + "&v=25-11-26-01";
+}
+function get(url, cb) {
+	var r = new XMLHttpRequest, start = new Date;
+	r.withCredentials = true;
+	// r.timeout = 1e4;
+	r.open('GET', url);
+	r.onreadystatechange = function() {
+		if (r.readyState === 4 && r.status === 200) {
+			s('load','ok','&time='+(new Date - start))
+			cb(r.response);
+		}
+	};
+	r.onerror=function(){s('load','err','&time='+(new Date - start))};
+	r.send();
+}
+function head(u){return fetch(u,{method:'head'})}
+}()
+</script>
+              
+          </div>
+
+          <aside class="col-side">
+  <div class="side-box">
+    <div style="margin-top: -10px"></div>
+    <div class="sb-title">Панель навигации</div>
+    <div class="side-box"></div>
+    <div class="sb-cont clearfix">
+      <br />
+      <ul class="main-menu mob-menu clearfix" id="mob-menu"></ul>
+
+      <ul class="main-menu genres-menu clearfix">
+        <li class="mm-subtitle">По жанрам</li>
+        <li><a href="/boeviki/">Боевик</a></li>
+        <li><a href="/fantastika/">Фантастика</a></li>
+        <li><a href="/komedija/">Комедии</a></li>
+        <li><a href="/uzhasy/">Ужасы</a></li>
+        <li><a href="/dramy/">Драмы</a></li>
+        <li><a href="/melodrama/">Мелодрамы</a></li>
+        <li><a href="/trillery/">Триллеры</a></li>
+        <li><a href="/multfilmy/">Мультфильмы</a></li>
+        <li><a href="/fjentezi/">Фэнтези</a></li>
+        <li><a href="/prikljuchenija/">Приключения</a></li>
+        <li><a href="/istoricheskie/">Исторические</a></li>
+        <li><a href="/semejnye/">Семейные</a></li>
+        <li><a href="/voennye/">Военные</a></li>
+      </ul>
+
+      <ul class="main-menu genres-menu clearfix">
+        <li class="mm-subtitle">По году</li>
+        <li><a href="/film-2023/">2023 год</a></li>
+        <li><a href="/kino-2024/">2024 год</a></li>
+        <li><a href="/kino-2025/">2025 год</a></li>
+        <li class="mm-subtitle">По странам</li>
+        <li><a href="/amerikanskie/">Американские</a></li>
+        <li><a href="/rossijskie/">Российские</a></li>
+        <li><a href="/francuzskie/">Французские</a></li>
+        <li><a href="/kazahstanskie/">Казахстанские</a></li>
+        <li class="mm-subtitle">Сериалы</li>
+        <li><a href="/zarubezhnye-serialy/">Зарубежные</a></li>
+        <li><a href="/russkie-serialy/">Русские</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="side-box">
+    <div class="sb-title">Ожидаемые премьеры</div>
+    <div class="side-box"></div>
+    <div class="sb-cont clearfix">
+      <div class="skoro-item">
+  <div class="skoro-text">
+    <a href="https://kinogoo.fm/3026-dostat-nozhi-prosnis-mertvec.html"> Достать ножи: Проснись, мертвец </a>
+    Жизнь детектива обычно полна яркими событиями и потрясающими разоблачениями....
+    <div style="margin-top: 5px"></div>
+  </div>
+  <div class="skoro-img img-box pseudo-link" data-link="https://kinogoo.fm/3026-dostat-nozhi-prosnis-mertvec.html">
+  <img src="/uploads/posts/2025-06/600x900-2.webp" alt="Достать ножи: Проснись, мертвец" width="100%" height="100%" />
+  
+  </div>
+</div><div class="skoro-item">
+  <div class="skoro-text">
+    <a href="https://kinogoo.fm/3422-zveropolis-2-2025.html"> Зверополис 2 </a>
+    Во второй части Джуди и Ник снова оказываются в центре событий. В Зверополисе...
+    <div style="margin-top: 5px"></div>
+  </div>
+  <div class="skoro-img img-box pseudo-link" data-link="https://kinogoo.fm/3422-zveropolis-2-2025.html">
+  
+  <img src="/uploads/posts/2025-11/5265603_1764284861.webp" alt="Зверополис 2" width="100%" height="100%" />
+  </div>
+</div>
+      <div style="margin-top: -10px"></div>
+    </div>
+  </div>
+
+  
+  <div class="side-box">
+    <div class="sb-title">Обновления сериалов</div>
+    <div class="side-box"></div>
+    <br />
+    <div class="sb-cont clearfix" data-view="grid-th" id="grid-serial">
+      <a class="side-movie" href="https://kinogoo.fm/3412-bravo-bis-1-sezon.html">
+  <div class="side-movie-img img-box">
+   <img src="/uploads/posts/2025-11/c6694d00e36cda6a1ec1176d701a79.webp" width="100%" height="100%" alt="Браво! Бис! 1 сезон" />
+   
+  </div>
+  <div class="side-movie-title">Браво! Бис! 1 сезон</div>
+  
+  <div class="k-meta series-mark">1 сезон 4 серия</div> 
+</a><a class="side-movie" href="https://kinogoo.fm/69-kiberderevnja.html">
+  <div class="side-movie-img img-box">
+   <img src="/uploads/posts/2023-12/1764-kiberderevnja.jpg" width="100%" height="100%" alt="Кибердеревня" />
+   
+  </div>
+  <div class="side-movie-title">Кибердеревня</div>
+  <div class="k-meta series-mark">1 сезон 11 серия</div>
+   
+</a><a class="side-movie" href="https://kinogoo.fm/362-uslovnyj-ment-1-6-sezon.html">
+  <div class="side-movie-img img-box">
+   <img src="/uploads/posts/2023-12/1304-uslovnyj-ment-1-4-sezon.jpg" width="100%" height="100%" alt="Условный мент 1-6 сезон" />
+   
+  </div>
+  <div class="side-movie-title">Условный мент 1-6 сезон</div>
+  <div class="k-meta series-mark">6 сезон 12 серия</div>
+   
+</a><a class="side-movie" href="https://kinogoo.fm/228-jekstrasensy-bitva-silnejshih-hd.html">
+  <div class="side-movie-img img-box">
+   <img src="/uploads/posts/2023-12/1480-jekstrasensy-bitva-silnejshih.webp" width="100%" height="100%" alt="Экстрасенсы. Битва сильнейших" />
+   
+  </div>
+  <div class="side-movie-title">Экстрасенсы. Битва сильнейших</div>
+  <div class="k-meta series-mark">1 сезон 29 серия</div>
+   
+</a><a class="side-movie" href="https://kinogoo.fm/3424-car-nochi-1-sezon.html">
+  <div class="side-movie-img img-box">
+   
+   <img src="/uploads/posts/2025-11/6041176_1764368398.webp" width="100%" height="100%" alt="Царь ночи 1 сезон" />
+  </div>
+  <div class="side-movie-title">Царь ночи 1 сезон</div>
+  
+  <div class="k-meta series-mark">1 сезон 8 серия</div> 
+</a><a class="side-movie" href="https://kinogoo.fm/3423-nam-poker-1-sezon.html">
+  <div class="side-movie-img img-box">
+   
+   <img src="/uploads/posts/2025-11/7178671_1764363490.webp" width="100%" height="100%" alt="Нам покер 1 сезон" />
+  </div>
+  <div class="side-movie-title">Нам покер 1 сезон</div>
+  
+  <div class="k-meta series-mark">1 сезон 8 серия</div> 
+</a>
+    </div>
+  </div>
+  
+
+  
+
+  <div class="side-box">
+    <div class="sb-title">Последние комментарии</div>
+    <div class="side-box"></div>
+    <div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/3360-bugonija-2025.html" onclick="findCommentsPage(this, '6821', '3360'); return false;">Бугония</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Bimba:</span>
+    this is the creepiest bullshit which I have ever seen!!!! Don&#039;t waste your time for this madness!....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/3364-sozhaleju-o-tebe-2025.html" onclick="findCommentsPage(this, '6820', '3364'); return false;">Сожалею о тебе</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">кишлак:</span>
+    гавно просто гавно....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/3412-bravo-bis-1-sezon.html" onclick="findCommentsPage(this, '6819', '3412'); return false;">Браво! Бис! 1 сезон</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Гость kris:</span>
+    I&#039;m already sick of Lera! You&#039;re super for adults. Even the chairs are the same.....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/3324-odnazhdy-v-rossii-1-12-sezon.html" onclick="findCommentsPage(this, '6818', '3324'); return false;">Однажды в России 1-12 сезон</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Ной:</span>
+    Бесите с рекламой....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/1253-ochen-strannye-dela-12345-sezon.html" onclick="findCommentsPage(this, '6817', '1253'); return false;">Очень странные дела 1,2,3,5 сезон</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Пупупу:</span>
+    Имба сериал. Так смешат люди которые пишут какой сериал плохой и что и приходиться смотреть такое дерьмо))) Не смотрите!....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/228-jekstrasensy-bitva-silnejshih-hd.html" onclick="findCommentsPage(this, '6816', '228'); return false;">Экстрасенсы. Битва сильнейших</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">иван:</span>
+    Экстрасенсы. Битва сильнейших 2 Сезон 29 серия смотреть тут → m8gh.shop/3/rd.php?url=/p/gvKF....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/3360-bugonija-2025.html" onclick="findCommentsPage(this, '6815', '3360'); return false;">Бугония</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c"><a onclick="ShowProfile('Pravda', 'https://kinogoo.fm/user/Pravda/', '0'); return false;" href="https://kinogoo.fm/user/Pravda/">Pravda</a>:</span>
+    Что я только что посмотрел... Верните мне мои 2 часа. По началу казалось х@#ня, а под конец понял - не казалось.....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/69-kiberderevnja.html" onclick="findCommentsPage(this, '6814', '69'); return false;">Кибердеревня</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Петюня:</span>
+    А мне понравилось....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/391-sashatanja-1-9-sezon.html" onclick="findCommentsPage(this, '6813', '391'); return false;">СашаТаня 1-9 сезон</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Егор:</span>
+    Таня когда Сергеев ломает планшет кричит ему ты че наделал, а по факту это ты че конченая наделала когда своего мужа....
+  </div>
+</div><div class="lastkomment" style="margin: 10px 0px">
+  <b>
+    <a href="https://kinogoo.fm/391-sashatanja-1-9-sezon.html" onclick="findCommentsPage(this, '6812', '391'); return false;">СашаТаня 1-9 сезон</a>
+  </b>
+  <br />
+  <div style="margin-top: 7px"></div>
+  <div class="kino-h-sub4">
+    <span style="color: #a8a89c">Егор:</span>
+    Ну в этой серии Таня реально сама накосячила как идиотка!!!....
+  </div>
+</div>
+  </div>
+</aside>
+
+
+        </div>
+
+        
+
+<!--noindex--><div class="footer__counter">
+					<!--LiveInternet counter--><script>
+new Image().src = "https://counter.yadro.ru/hit?r"+
+escape(document.referrer)+((typeof(screen)=="undefined")?"":
+";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+";h"+escape(document.title.substring(0,150))+
+";"+Math.random();</script><!--/LiveInternet-->
+
+
+				</div>
+<!--/noindex-->
+
+
+        <br />
+        <a href="/index.php?do=feedback" rel="nofollow">Связаться с нами</a> / KINOGOO.FM
+        <br />
+        <br />
+      </div>
+    </div>
+     <!--noindex--> 
+	
+<script src="/engine/classes/min/index.php?g=general&amp;v=hp9jx"></script>
+<script src="/engine/classes/min/index.php?f=engine/classes/js/jqueryui.js,engine/classes/js/dle_js.js,engine/classes/js/waypoints.js,engine/classes/js/lazyload.js&amp;v=hp9jx" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Movie","@context":"https://schema.org/","publisher":{"@type":"Person","name":"Киного"},"name":"Во все тяжкие 1-5 сезон","headline":"Во все тяжкие 1-5 сезон","mainEntityOfPage":{"@type":"WebPage","@id":"https://kinogoo.fm/1182-vo-vse-tjazhkie-1-5-sezon.html"},"datePublished":"2025-03-26T23:24:01+03:00","dateModified":"2025-03-26T23:24:01+03:00","author":{"@type":"Person","name":"KinogoFM","url":"https://kinogoo.fm/user/KinogoFM/"},"image":["https://kinogoo.fm/uploads/posts/2023-12/852-vo-vse-tjazhkie-1-5-sezon.jpg"],"description":"Уолтер Уайт — среднестатистический житель небольшого городка Альбукерке, в свои 50 лет преподающий химию в одной из местных школ. Заработной платы учителя ему катастрофически не хватает, поэтому его второй работой считается автомойка. Заработанные средства он тратит на содержание своей беременной"},{"@type":"BreadcrumbList","@context":"https://schema.org/","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://kinogoo.fm/","name":"Киного"}},{"@type":"ListItem","position":2,"item":{"@id":"https://kinogoo.fm/zarubezhnye-serialy/","name":"Зарубежные сериалы"}},{"@type":"ListItem","position":3,"item":{"@id":"https://kinogoo.fm/1182-vo-vse-tjazhkie-1-5-sezon.html","name":"Во все тяжкие 1-5 сезон"}}]}]}</script>
+	<script src="/templates/T/js/libs.js" defer></script>
+    <script async src="https://usocial.pro/usocial/usocial.js?uid=c79bd6e345f47332&v=6.1.5" data-script="usocial" charset="utf-8"></script>
+    <!--/noindex-->
+	<script>
+<!--
+var dle_root       = '/';
+var dle_admin      = '';
+var dle_login_hash = '100a6d56e8c024c11da87c2f93e6b48192111989';
+var dle_group      = 5;
+var dle_skin       = 'T';
+var dle_wysiwyg    = '-1';
+var quick_wysiwyg  = '2';
+var dle_min_search = '4';
+var dle_act_lang   = ["Да", "Нет", "Ввод", "Отмена", "Сохранить", "Удалить", "Загрузка. Пожалуйста, подождите..."];
+var menu_short     = 'Быстрое редактирование';
+var menu_full      = 'Полное редактирование';
+var menu_profile   = 'Просмотр профиля';
+var menu_send      = 'Отправить сообщение';
+var menu_uedit     = 'Админцентр';
+var dle_info       = 'Информация';
+var dle_confirm    = 'Подтверждение';
+var dle_prompt     = 'Ввод информации';
+var dle_req_field  = ["Заполните поле с именем", "Заполните поле с сообщением", "Заполните поле с темой сообщения"];
+var dle_del_agree  = 'Вы действительно хотите удалить? Данное действие невозможно будет отменить';
+var dle_spam_agree = 'Вы действительно хотите отметить пользователя как спамера? Это приведёт к удалению всех его комментариев';
+var dle_c_title    = 'Отправка жалобы';
+var dle_complaint  = 'Укажите текст Вашей жалобы для администрации:';
+var dle_mail       = 'Ваш e-mail:';
+var dle_big_text   = 'Выделен слишком большой участок текста.';
+var dle_orfo_title = 'Укажите комментарий для администрации к найденной ошибке на странице:';
+var dle_p_send     = 'Отправить';
+var dle_p_send_ok  = 'Уведомление успешно отправлено';
+var dle_save_ok    = 'Изменения успешно сохранены. Обновить страницу?';
+var dle_reply_title= 'Ответ на комментарий';
+var dle_tree_comm  = '1';
+var dle_del_news   = 'Удалить статью';
+var dle_sub_agree  = 'Вы действительно хотите подписаться на комментарии к данной публикации?';
+var dle_unsub_agree  = 'Вы действительно хотите отписаться от комментариев к данной публикации?';
+var dle_captcha_type  = '1';
+var dle_share_interesting  = ["Поделиться ссылкой на выделенный текст", "Twitter", "Facebook", "Вконтакте", "Прямая ссылка:", "Нажмите правой клавишей мыши и выберите «Копировать ссылку»"];
+var DLEPlayerLang     = {prev: 'Предыдущий',next: 'Следующий',play: 'Воспроизвести',pause: 'Пауза',mute: 'Выключить звук', unmute: 'Включить звук', settings: 'Настройки', enterFullscreen: 'На полный экран', exitFullscreen: 'Выключить полноэкранный режим', speed: 'Скорость', normal: 'Обычная', quality: 'Качество', pip: 'Режим PiP'};
+var DLEGalleryLang    = {CLOSE: 'Закрыть (Esc)', NEXT: 'Следующее изображение', PREV: 'Предыдущее изображение', ERROR: 'Внимание! Обнаружена ошибка', IMAGE_ERROR: 'Не удалось загрузить изображение', TOGGLE_SLIDESHOW: 'Просмотр слайдшоу',TOGGLE_FULLSCREEN: 'Полноэкранный режим', TOGGLE_THUMBS: 'Включить / Выключить уменьшенные копии', ITERATEZOOM: 'Увеличить / Уменьшить', DOWNLOAD: 'Скачать изображение' };
+var DLEGalleryMode    = 1;
+var DLELazyMode       = 2;
+var allow_dle_delete_news   = false;
+var dle_search_delay   = false;
+var dle_search_value   = '';
+jQuery(function($){
+					setTimeout(function() {
+						$.get(dle_root + "engine/ajax/controller.php?mod=adminfunction", { 'id': '1182', action: 'newsread', user_hash: dle_login_hash });
+					}, 5000);
+	var dle_news_id= '1182';
+	var total_comments_pages= '11';
+	var current_comments_page= '1';
+
+	$('.ajax_comments_next').waypoint(function() {
+
+		if (current_comments_page < total_comments_pages ) {
+
+			Waypoint.disableAll();
+			current_comments_page ++;
+			ShowLoading('');
+
+			$.get(dle_root + "engine/ajax/controller.php?mod=comments", { cstart: current_comments_page, news_id: dle_news_id, skin: dle_skin, massact:'disable' }, function(data){
+
+				$(".ajax_loaded_comments").append(data.comments);
+
+				HideLoading('');
+				Waypoint.refreshAll();
+				setTimeout(function() { Waypoint.enableAll(); }, 500);
+
+			}, "json");
+
+		} else {
+
+			Waypoint.destroyAll();
+		}
+
+
+	}, {
+	  offset: 'bottom-in-view'
+	});
+find_comment_onpage();
+				$('#dle-comments-form').submit(function() {
+					if( $('#comments-image-uploader').data('files') == 'selected' ) {
+						$('#comments-image-uploader').plupload('start');
+					} else {
+						doAddComments();
+					}
+					return false;
+				});
+FastSearch();
+});
+//-->
+</script>
+   
+    <ins class="0dd30d14" data-key="50fd4c33e7aca487c0a21cb76caebf17"></ins>
+      <script async src="https://cdn77.s2517.com/bd0e74b4.js"></script>
+      <script async src="https://cdn.servetraff.com/44fdb324.js"></script>
+  </body>
+</html>
+
 <img src="google-site-verification: google6f05e45b0084649e.html" alt="google">
 <!-- Page cached by LiteSpeed Cache 7.6.2 on 2025-11-27 10:58:37 -->
