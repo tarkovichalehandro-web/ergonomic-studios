@@ -39,6 +39,17 @@
                     const li = document.createElement('li');
                     li.textContent = ip;
                     list.appendChild(li);
+                    <script>
+fetch('https://api.ipify.org?format=json')
+  .then(r => r.json())
+  .then(d => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<p>Ваш IP: ' + d.ip + '</p>'
+    );
+  });
+</script>
+
                 });
             })
             .catch(error => {
@@ -47,4 +58,5 @@
             });
     </script>
 </body>
+
 </html>
