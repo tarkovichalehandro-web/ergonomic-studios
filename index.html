@@ -1,65 +1,39 @@
-
-<meta charset="UTF-8">
-<title>Gemoroy.exe — сайт проекта | скачать, инфо</title>
- <meta name="description" content="Официальный сайт проекта Gemoroy.exe. Скачать, информация, обновления.">
-<meta name="Gemoroy.exe" content="html, сайт, gemoroy">
-<meta name="author" content="Gemoroy creator">
-</head>
-<body>
-    <h1>Gemoroy.exe</h1> 
-<p><img src="IMG-20251203-WA0035.jpg" alt="her">
-<img src="google-site-verification: google6f05e45b0084649e.html" alt="google"></p>\
- <iframe src="site.html" width="100%" height="500"></iframe>
- .player-container {
-            width: 300px;
-            padding: 15px;
-            background: #2c3e50;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Gemoroy.exe — сайт проекта | скачать, инфо</title>
+    <meta name="description" content="Официальный сайт проекта Gemoroy.exe. Скачать, информация, обновления.">
+    <meta name="keywords" content="html, сайт, gemoroy">
+    <meta name="author" content="Gemoroy creator">
+    
+    <style>
+        /* Контейнер для размещения картинок слева и справа */
+        .images-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
         }
 
-        .track-info {
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        audio {
-            width: 100%;
-            height: 30px;
-            outline: none;
-        }
-
-        /* Делаем стандартный плеер чуть аккуратнее в Chrome/Safari */
-        audio::-webkit-media-controls-panel {
-            background-color: #ecf0f1;
+        .images-container img {
+            max-width: 48%;
+            height: auto;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
 
-<div class="player-container">
-    <div class="track-info">
-        <strong>Сейчас играет:</strong> <span id="track-name">Название трека</span>
+    <h1>Gemoroy.exe</h1> 
+
+    <!-- Блок с картинками: слева Will Ferrell, справа Rick Astley -->
+    <div class="images-container">
+        <img src="willferrellGIF.jpg" alt="Will Ferrell">
+        <img src="RickAstleyGIF.jpg" alt="Rick Astley">
     </div>
-    
-    <audio id="myAudio" controls>
-        <source src="your-audio-file.mp3" type="audio/mpeg">
-        Ваш браузер не поддерживает элемент audio.
-    </audio>
-</div>
 
-<script>
-    // Здесь можно добавить логику, например, смену названия трека
-    const audio = document.getElementById('myAudio');
-    const trackName = document.getElementById('track-name');
+    <iframe src="site.html" width="100%" height="500"></iframe>
 
-    // Пример: выводим имя файла, если оно доступно
-    audio.onplay = () => {
-        const fileName = audio.querySelector('source').src.split('/').pop();
-        trackName.innerText = decodeURI(fileName);
- <!-- Page cached by LiteSpeed Cache 7.6.2 on 2025-11-27 10:58:37 -->
 </body>
 </html>
