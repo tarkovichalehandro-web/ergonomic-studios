@@ -63,7 +63,7 @@
             transform: scale(1.02);
         }
 
-        /* Блок контента из Википедии (интегрированный хаос) */
+        /* Блок контента */
         .wiki-section {
             background: #f8f9fa;
             border-left: 4px solid #3b82f6;
@@ -81,7 +81,20 @@
         .wiki-section p {
             font-size: 14px;
             color: #4b5563;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Стили для большой фотографии внутри блока */
+        .wiki-section img {
+            display: block;
+            max-width: 100%;
+            max-height: 400px;
+            width: auto;
+            height: auto;
+            margin: 15px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            object-fit: contain;
         }
 
         /* iframe блок */
@@ -118,12 +131,13 @@
             <img src="extreme-macro-one-dollar-bill-pyramid-eye.jpg" alt="Conspiracy">
         </div>
 
-        <!-- Интегрированная Вики-секция (тот самый «хаос», оформленный как информационный блок) -->
+        <!-- Секция с большой фотографией -->
         <div class="wiki-section">
-        <h2>Мої улюбленні фотографіі з 11-го вересня:)</h2>
-        <p>Кста у мене тепер є твій айпішнік ))))</p>
-        <img src="2048.jpg" alt="9/11">
-            
+            <h2>Мої улюбленні фотографіі з 11-го вересня:)</h2>
+            <p>Кста у мене тепер є твій айпішнік ))))</p>
+            <img src="2048.jpg" alt="9/11">
+        </div>  
+
         <!-- Подключенный сайт / iframe -->
         <div class="iframe-container">
             <iframe src="site.html" title="Внутренний сайт"></iframe>
